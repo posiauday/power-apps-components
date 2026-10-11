@@ -1,0 +1,193 @@
+ComponentDefinitions:
+  lcsButton:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks button: four looks, your brand colour, light or dark, a busy state, and an optional select-again-to-confirm for actions that can't be undone."
+    CustomProperties:
+      Label:
+        PropertyKind: Input
+        DisplayName: Label
+        DataType: Text
+        Description: "The button's text."
+        Default: ="Save"
+      Appearance:
+        PropertyKind: Input
+        DisplayName: Appearance
+        DataType: Text
+        Description: "Primary, Secondary, Outline or Subtle."
+        Default: ="Primary"
+      IconName:
+        PropertyKind: Input
+        DisplayName: IconName
+        DataType: Text
+        Description: "A Fluent icon name, such as Checkmark. Leave empty for no icon."
+        Default: =""
+      IsBusy:
+        PropertyKind: Input
+        DisplayName: IsBusy
+        DataType: Boolean
+        Description: "While true, the button is disabled and says it's working."
+        Default: =false
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour. Primary buttons use it, and their hover and pressed colours are worked out from it."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen: text and borders turn light, Secondary is drawn as Outline and Subtle as Transparent."
+        Default: ="Light"
+      RequireConfirm:
+        PropertyKind: Input
+        DisplayName: RequireConfirm
+        DataType: Boolean
+        Description: "When true, the first select turns the button red and shows ConfirmLabel; OnClick runs only if it's selected again within ConfirmSeconds."
+        Default: =false
+      ConfirmLabel:
+        PropertyKind: Input
+        DisplayName: ConfirmLabel
+        DataType: Text
+        Description: "What the button says while it waits for the confirming select."
+        Default: ="Select again"
+      ConfirmSeconds:
+        PropertyKind: Input
+        DisplayName: ConfirmSeconds
+        DataType: Number
+        Description: "How long the button waits for the confirming select before it goes back to normal."
+        Default: =4
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "When the button starts working (IsBusy), a soft shade sweeps across it once. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      IsArmed:
+        PropertyKind: Output
+        DisplayName: IsArmed
+        DataType: Boolean
+        Description: "True while the button waits for the confirming select."
+      ClickCount:
+        PropertyKind: Output
+        DisplayName: ClickCount
+        DataType: Number
+        Description: "How many times the button was selected since the last ResetCount()."
+      FormatLabel:
+        PropertyKind: InputFunction
+        DisplayName: FormatLabel
+        DataType: Text
+        Description: "Lets the app change how the label is shown. Receives the label, returns the text to show."
+        Parameters:
+          - Text:
+              DataType: Text
+              Description: "The label to format."
+              Default: =""
+        Default: =Text
+      IsValidLabel:
+        PropertyKind: OutputFunction
+        DisplayName: IsValidLabel
+        DataType: Boolean
+        Description: "True when the text is a usable button label: not empty and at most 40 characters."
+        Parameters:
+          - Text:
+              DataType: Text
+              Description: "The label to check."
+              Default: =""
+      OnClick:
+        PropertyKind: Event
+        DisplayName: OnClick
+        ReturnType: None
+        Description: "Runs in the app when the button is selected. Receives the new click count."
+        Parameters:
+          - Count:
+              DataType: Number
+              Description: "The click count, including this click."
+              Default: =0
+        Default: =false
+      ResetCount:
+        PropertyKind: Action
+        DisplayName: ResetCount
+        ReturnType: None
+        Description: "Sets ClickCount back to 0."
+    Properties:
+      Width: =160
+      Height: =40
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: =Set(locArmed, false)
+      ClickCount: =Coalesce(locClicks, 0)
+      IsArmed: =locArmed
+      IsValidLabel: =!IsBlank(Trim(Text)) && Len(Text) <= 40
+      ResetCount: =Set(locClicks, 0)
+    Children:
+      - tmrConfirm:
+          Control: Timer@2.1.0
+          Properties:
+            Visible: =false
+            Duration: =Max(1, lcsButton.ConfirmSeconds) * 1000
+            Start: =locArmed
+            Repeat: =false
+            AutoStart: =false
+            OnTimerEnd: =Set(locArmed, false)
+      - btnMain:
+          Control: ModernButton@1.0.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Text: |-
+              =If(
+                  lcsButton.IsBusy, "Working…",
+                  locArmed, lcsButton.ConfirmLabel,
+                  lcsButton.FormatLabel(lcsButton.Label)
+              )
+            Appearance: |-
+              =If(
+                  locArmed, ButtonAppearance.Primary,
+                  Switch(
+                      lcsButton.Appearance,
+                      "Secondary", If(lcsButton.Theme = "Dark", ButtonAppearance.Outline, ButtonAppearance.Secondary),
+                      "Outline", ButtonAppearance.Outline,
+                      "Subtle", If(lcsButton.Theme = "Dark", ButtonAppearance.Transparent, ButtonAppearance.Subtle),
+                      ButtonAppearance.Primary
+                  )
+              )
+            BasePaletteColor: =If(locArmed, RGBA(196, 49, 75, 1), lcsButton.AccentColor)
+            Color: |-
+              =If(
+                  lcsButton.IsBusy, RGBA(97, 97, 97, 1),
+                  locArmed || !(lcsButton.Appearance in ["Secondary", "Outline", "Subtle"]), RGBA(255, 255, 255, 1),
+                  lcsButton.Theme = "Dark", RGBA(255, 255, 255, 1),
+                  RGBA(36, 36, 36, 1)
+              )
+            BorderColor: |-
+              =If(
+                  locArmed || lcsButton.IsBusy || !(lcsButton.Appearance in ["Secondary", "Outline"]), RGBA(0, 0, 0, 0),
+                  lcsButton.Theme = "Dark", RGBA(102, 102, 102, 1),
+                  RGBA(209, 209, 209, 1)
+              )
+            Icon: =If(locArmed, "Warning", lcsButton.IconName)
+            DisplayMode: =If(lcsButton.IsBusy, DisplayMode.Disabled, DisplayMode.Edit)
+            AccessibleLabel: =If(locArmed, lcsButton.ConfirmLabel, lcsButton.Label)
+            OnSelect: |-
+              =If(
+                  lcsButton.RequireConfirm && !locArmed,
+                  Set(locArmed, true),
+                  Set(locArmed, false);
+                  Set(locClicks, Coalesce(locClicks, 0) + 1);
+                  lcsButton.OnClick(locClicks)
+              )
+      - imgBusy:
+          Control: Image@2.2.3
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Visible: =lcsButton.IsBusy && lcsButton.Motion
+            Image: |-
+              =With(
+                  {w: RoundDown(Parent.Width, 0), h: RoundDown(Parent.Height, 0)},
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='" & w & "' height='" & h & "' viewBox='0 0 " & w & " " & h & "'><!--" & lcsButton.IsBusy & Rand() & "--><defs><linearGradient id='h' x1='0' x2='1'><stop offset='0' stop-color='#000000' stop-opacity='0'/><stop offset='.5' stop-color='#000000' stop-opacity='.1'/><stop offset='1' stop-color='#000000' stop-opacity='0'/></linearGradient><clipPath id='c'><rect width='" & w & "' height='" & h & "' rx='4'/></clipPath></defs><style>.s{animation:s 1.1s ease-in-out .1s both}@keyframes s{from{transform:translateX(-80px)}to{transform:translateX(" & w & "px)}}@media (prefers-reduced-motion:reduce){.s{animation:none;opacity:0}}</style><g clip-path='url(#c)'><rect class='s' width='80' height='" & h & "' fill='url(#h)'/></g></svg>")
+              )

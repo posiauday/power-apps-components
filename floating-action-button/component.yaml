@@ -1,0 +1,406 @@
+ComponentDefinitions:
+  lcsFab:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks floating action button: the screen's main action as a round button, optionally extended with a label or opening a speed-dial menu of more actions."
+    CustomProperties:
+      Icon:
+        PropertyKind: Input
+        DisplayName: Icon
+        DataType: Text
+        Description: "The icon: Add, Edit, Send, Search, Upload, Download, Camera, Check, Share, Chat or Close."
+        Default: ="Add"
+      Label:
+        PropertyKind: Input
+        DisplayName: Label
+        DataType: Text
+        Description: "What the button does, such as Add new or New request. Shown when Extended is true, and always read by screen readers."
+        Default: ="Add new"
+      Extended:
+        PropertyKind: Input
+        DisplayName: Extended
+        DataType: Boolean
+        Description: "When true, the button shows its label next to the icon."
+        Default: =false
+      Size:
+        PropertyKind: Input
+        DisplayName: Size
+        DataType: Text
+        Description: "Small (40), Regular (56) or Large (72)."
+        Default: ="Regular"
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "The button's colour. Use your app's brand colour."
+        Default: =RGBA(15, 108, 189, 1)
+      ContentColor:
+        PropertyKind: Input
+        DisplayName: ContentColor
+        DataType: Color
+        Description: "The icon and label colour on the button. Keep it readable on AccentColor."
+        Default: =RGBA(255, 255, 255, 1)
+      SpeedDial:
+        PropertyKind: Input
+        DisplayName: SpeedDial
+        DataType: Boolean
+        Description: "When true, the button opens a menu of Items instead of running OnSelect."
+        Default: =false
+      Items:
+        PropertyKind: Input
+        DisplayName: Items
+        DataType: Table
+        Description: "The speed-dial actions, as a table with Key, Icon and Label columns. Key is a short id your OnItemSelect checks, such as note. Three to six work best."
+        Default: |-
+          =Table(
+              {Key: "note", Icon: "Edit", Label: "New note"},
+              {Key: "photo", Icon: "Camera", Label: "Take a photo"},
+              {Key: "upload", Icon: "Upload", Label: "Upload a file"}
+          )
+      HiddenKeys:
+        PropertyKind: Input
+        DisplayName: HiddenKeys
+        DataType: Text
+        Description: "Keys of items to hide, separated by commas, such as If(!IsAdmin, \"delete\", \"\"). Empty shows every item."
+        Default: =""
+      DisabledKeys:
+        PropertyKind: Input
+        DisplayName: DisabledKeys
+        DataType: Text
+        Description: "Keys of items to show greyed out and unselectable, separated by commas."
+        Default: =""
+      Direction:
+        PropertyKind: Input
+        DisplayName: Direction
+        DataType: Text
+        Description: "Where the menu opens: Up (above the button, for the bottom of a screen) or Down (below it, for the top)."
+        Default: ="Up"
+      ItemHeight:
+        PropertyKind: Input
+        DisplayName: ItemHeight
+        DataType: Number
+        Description: "The height of each speed-dial row in pixels. 44 or more is easy to tap."
+        Default: =48
+      Disabled:
+        PropertyKind: Input
+        DisplayName: Disabled
+        DataType: Boolean
+        Description: "When true, the button is greyed out and can't be selected."
+        Default: =false
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "With a speed dial, its icon turns into the close mark as the menu opens, and back as it closes, and the menu's icons pop in. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      IsOpen:
+        PropertyKind: Output
+        DisplayName: IsOpen
+        DataType: Boolean
+        Description: "True while the speed-dial menu is open."
+      SelectedKey:
+        PropertyKind: Output
+        DisplayName: SelectedKey
+        DataType: Text
+        Description: "The Key of the speed-dial item chosen last."
+      IconSvg:
+        PropertyKind: OutputFunction
+        DisplayName: IconSvg
+        DataType: Text
+        Description: "Returns one of the button's icons as an image your app can use, in any colour: set an Image control's Image to it."
+        Parameters:
+          - Name:
+              DataType: Text
+              Description: "The icon's name, such as Edit."
+              Default: ="Add"
+          - Stroke:
+              DataType: Text
+              Description: "The icon's colour as a hex code, such as #0F6CBD."
+              Default: ="#FFFFFF"
+      OnSelect:
+        PropertyKind: Event
+        DisplayName: OnSelect
+        ReturnType: None
+        Description: "Runs in the app when the button is selected and SpeedDial is false."
+        Default: =false
+      OnItemSelect:
+        PropertyKind: Event
+        DisplayName: OnItemSelect
+        ReturnType: None
+        Description: "Runs in the app when a speed-dial item is selected. Receives its Key and Label; use Switch(Key, ...) for what each does. The menu has already closed."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The Key of the selected item."
+              Default: =""
+          - Label:
+              DataType: Text
+              Description: "The Label of the selected item."
+              Default: =""
+        Default: =false
+      Open:
+        PropertyKind: Action
+        DisplayName: Open
+        ReturnType: None
+        Description: "Opens the speed-dial menu."
+      Close:
+        PropertyKind: Action
+        DisplayName: Close
+        ReturnType: None
+        Description: "Closes the speed-dial menu."
+      Toggle:
+        PropertyKind: Action
+        DisplayName: Toggle
+        ReturnType: None
+        Description: "Opens the speed-dial menu if it's closed, and closes it if it's open."
+    Properties:
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: |-
+        =Set(locOpen, false);
+        Set(locSelectedKey, "")
+      Width: |-
+        =With(
+            {
+                fabSize: Switch(lcsFab.Size, "Small", 40, "Large", 72, 56),
+                labelWidth: Min(Len(lcsFab.Label) * 8, 200)
+            },
+            Max(
+                If(lcsFab.Extended, fabSize + labelWidth + 16, fabSize),
+                If(lcsFab.SpeedDial, 240, 0)
+            )
+        )
+      Height: |-
+        =With(
+            {fabSize: Switch(lcsFab.Size, "Small", 40, "Large", 72, 56)},
+            If(
+                lcsFab.SpeedDial,
+                fabSize + 12 + CountRows(
+                    Filter(lcsFab.Items As item, !(item.Key in ForAll(Split(lcsFab.HiddenKeys, ","), Trim(Value))))
+                ) * lcsFab.ItemHeight,
+                fabSize
+            )
+        )
+      IsOpen: =locOpen && lcsFab.SpeedDial
+      SelectedKey: =locSelectedKey
+      IconSvg: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='" & Stroke &
+            "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>" &
+            Switch(
+                Name,
+                "Edit", "<path d='M4 20h4L19 9l-4-4L4 16z'/><path d='M13 7l4 4'/>",
+                "Send", "<path d='M3 11l18-8-8 18-2-8z'/>",
+                "Search", "<circle cx='11' cy='11' r='7'/><path d='M20 20l-4-4'/>",
+                "Upload", "<path d='M12 16V4M7 9l5-5 5 5M4 20h16'/>",
+                "Download", "<path d='M12 4v12M7 11l5 5 5-5M4 20h16'/>",
+                "Camera", "<path d='M4 8h4l2-3h4l2 3h4v11H4z'/><circle cx='12' cy='13' r='3'/>",
+                "Check", "<path d='M5 12l5 5 9-10'/>",
+                "Share", "<circle cx='6' cy='12' r='2'/><circle cx='18' cy='6' r='2'/><circle cx='18' cy='18' r='2'/><path d='M8 11l8-4M8 13l8 4'/>",
+                "Chat", "<path d='M4 5h16v11H9l-5 4z'/>",
+                "Close", "<path d='M6 6l12 12M18 6L6 18'/>",
+                "<path d='M12 5v14M5 12h14'/>"
+            ) &
+            "</svg>"
+        )
+      Open: =Set(locOpen, true); Set(locFabStamp, Text(Rand()))
+      Close: =Set(locOpen, false); Set(locFabStamp, Text(Rand()))
+      Toggle: =Set(locOpen, !locOpen); Set(locFabStamp, Text(Rand()))
+    Children:
+      - btnScrim:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Visible: =locOpen && lcsFab.SpeedDial
+            Text: ="Close menu"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 0, 0, 0)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            OnSelect: =Set(locOpen, false); Set(locFabStamp, Text(Rand()))
+      - galItems:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =If(lcsFab.Direction = "Down", cntFab.Height + 12, 0)
+            Width: =Parent.Width
+            Height: =CountRows(Self.AllItems) * lcsFab.ItemHeight
+            Visible: =locOpen && lcsFab.SpeedDial
+            Items: =Filter(lcsFab.Items As item, !(item.Key in ForAll(Split(lcsFab.HiddenKeys, ","), Trim(Value))))
+            TemplateSize: =lcsFab.ItemHeight
+            TemplatePadding: =0
+            ShowScrollbar: =false
+            BorderStyle: =BorderStyle.None
+          Children:
+            - cntItem:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  Height: =lcsFab.ItemHeight - 8
+                  Width: =Min(Len(ThisItem.Label) * 8 + 64, Parent.TemplateWidth)
+                  X: =Parent.TemplateWidth - Self.Width
+                  Y: =4
+                  Fill: =RGBA(255, 255, 255, 1)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  DropShadow: =DropShadow.Semilight
+                  RadiusTopLeft: =(lcsFab.ItemHeight - 8) / 2
+                  RadiusTopRight: =(lcsFab.ItemHeight - 8) / 2
+                  RadiusBottomLeft: =(lcsFab.ItemHeight - 8) / 2
+                  RadiusBottomRight: =(lcsFab.ItemHeight - 8) / 2
+                Children:
+                  - lblItem:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        X: =16
+                        Y: =0
+                        Width: =Parent.Width - 52
+                        Height: =Parent.Height
+                        Text: =ThisItem.Label
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: |-
+                          =If(
+                              ThisItem.Key in ForAll(Split(lcsFab.DisabledKeys, ","), Trim(Value)),
+                              RGBA(112, 112, 112, 1),
+                              RGBA(36, 36, 36, 1)
+                          )
+                        Wrap: =false
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                  - imgItem:
+                      Control: Image@2.2.3
+                      Properties:
+                        Width: =20
+                        Height: =20
+                        X: =Parent.Width - 32
+                        Y: =(Parent.Height - Self.Height) / 2
+                        Image: |-
+                          =With(
+                              {icon: lcsFab.IconSvg(ThisItem.Icon, Mid(JSON(lcsFab.AccentColor), 2, 7))},
+                              If(lcsFab.Motion, Substitute(icon, EncodeUrl(">"), EncodeUrl("><!--" & locFabStamp & "--><style>path,circle{transform-origin:12px 12px;animation:p .3s cubic-bezier(.2,1.4,.4,1) .05s both}@keyframes p{from{opacity:0;transform:scale(.4)}}@media (prefers-reduced-motion:reduce){path,circle{animation:none}}</style>"), 1), icon)
+                          )
+            - btnItem:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =cntItem.X
+                  Y: =cntItem.Y
+                  Width: =cntItem.Width
+                  Height: =cntItem.Height
+                  Text: =ThisItem.Label
+                  DisplayMode: |-
+                    =If(
+                        ThisItem.Key in ForAll(Split(lcsFab.DisabledKeys, ","), Trim(Value)),
+                        DisplayMode.Disabled,
+                        DisplayMode.Edit
+                    )
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(15, 108, 189, 0.06)
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(15, 108, 189, 0.12)
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  RadiusTopLeft: =cntItem.Height / 2
+                  RadiusTopRight: =cntItem.Height / 2
+                  RadiusBottomLeft: =cntItem.Height / 2
+                  RadiusBottomRight: =cntItem.Height / 2
+                  OnSelect: |-
+                    =Set(locSelectedKey, ThisItem.Key);
+                    Set(locOpen, false);
+                    Set(locFabStamp, Text(Rand()));
+                    lcsFab.OnItemSelect(ThisItem.Key, ThisItem.Label)
+      - cntFab:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Height: =Switch(lcsFab.Size, "Small", 40, "Large", 72, 56)
+            Width: =If(lcsFab.Extended, Self.Height + Min(Len(lcsFab.Label) * 8, 200) + 16, Self.Height)
+            X: =Parent.Width - Self.Width
+            Y: =If(lcsFab.Direction = "Down", 0, Parent.Height - Self.Height)
+            Fill: =If(lcsFab.Disabled, RGBA(224, 224, 224, 1), lcsFab.AccentColor)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            DropShadow: =If(lcsFab.Disabled, DropShadow.None, DropShadow.Semilight)
+            RadiusTopLeft: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+            RadiusTopRight: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+            RadiusBottomLeft: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+            RadiusBottomRight: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+          Children:
+            - imgFab:
+                Control: Image@2.2.3
+                Properties:
+                  Width: =Switch(lcsFab.Size, "Small", 20, "Large", 32, 24)
+                  Height: =Self.Width
+                  X: =If(lcsFab.Extended, (Parent.Height - Self.Width) / 2, (Parent.Width - Self.Width) / 2)
+                  Y: =(Parent.Height - Self.Height) / 2
+                  Image: |-
+                    =With(
+                        {
+                            icon: lcsFab.IconSvg(
+                                If(locOpen && lcsFab.SpeedDial, "Close", lcsFab.Icon),
+                                If(lcsFab.Disabled, "#8A8A8A", Mid(JSON(lcsFab.ContentColor), 2, 7))
+                            )
+                        },
+                        If(
+                            lcsFab.Motion && lcsFab.SpeedDial && !IsBlank(locFabStamp),
+                            Substitute(icon, EncodeUrl(">"), EncodeUrl("><!--" & locFabStamp & "--><style>path,circle{transform-origin:12px 12px;animation:t .25s cubic-bezier(.2,.8,.2,1) both}@keyframes t{from{transform:rotate(" & If(locOpen, -45, 45) & "deg)}}@media (prefers-reduced-motion:reduce){path,circle{animation:none}}</style>"), 1),
+                            icon
+                        )
+                    )
+            - lblFab:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =Parent.Height - 4
+                  Y: =0
+                  Width: =Parent.Width - Self.X - 16
+                  Height: =Parent.Height
+                  Visible: =lcsFab.Extended
+                  Text: =lcsFab.Label
+                  Size: =Switch(lcsFab.Size, "Small", 13, "Large", 16, 14)
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsFab.Disabled, RGBA(112, 112, 112, 1), lcsFab.ContentColor)
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - btnFab:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =Parent.Height
+                  Text: =lcsFab.Label & If(lcsFab.SpeedDial, If(locOpen, ", close menu", ", open menu"), "")
+                  Tooltip: =lcsFab.Label
+                  DisplayMode: =If(lcsFab.Disabled, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(255, 255, 255, 0.12)
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(255, 255, 255, 0.24)
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  RadiusTopLeft: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+                  RadiusTopRight: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+                  RadiusBottomLeft: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+                  RadiusBottomRight: =Switch(lcsFab.Size, "Small", 12, "Large", 22, 16)
+                  OnSelect: =If(lcsFab.SpeedDial, Set(locOpen, !locOpen); Set(locFabStamp, Text(Rand())), lcsFab.OnSelect())
