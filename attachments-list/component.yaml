@@ -1,0 +1,1143 @@
+ComponentDefinitions:
+  lcsAttachmentList:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks attachments: a drop card that adds files (choose or drag), each with a status and a reason when it can't go, the files already attached with Open and remove-and-undo, and one Upload button that hands everything to your app; light and dark, with motion."
+    AccessAppScope: true
+    CustomProperties:
+      Title:
+        PropertyKind: Input
+        DisplayName: Title
+        DataType: Text
+        Description: "The heading at the top of the card."
+        Default: ="Upload documents"
+      Subtitle:
+        PropertyKind: Input
+        DisplayName: Subtitle
+        DataType: Text
+        Description: "A line under the heading. Empty shows none."
+        Default: ="Add the files for this request"
+      Files:
+        PropertyKind: Input
+        DisplayName: Files
+        DataType: Table
+        Description: "The files already attached, as a table with Key, Name, Size (bytes, 0 when unknown), Url (a link that opens the file, or empty), Who and When columns."
+        Default: |-
+          =Table({Key: "f1", Name: "Site survey.pdf", Size: 1843200, Url: "", Who: "Dana Kaur", When: DateAdd(Now(), -2, TimeUnit.Days)}, {Key: "f2", Name: "Notes.docx", Size: 23552, Url: "", Who: "Sam Okafor", When: DateAdd(Now(), -20, TimeUnit.Minutes)})
+      AcceptedTypes:
+        PropertyKind: Input
+        DisplayName: AcceptedTypes
+        DataType: Text
+        Description: "The file types people can add, as extensions separated by commas, such as pdf,docx,xlsx. Shown as chips; another type is added with a reason and isn't uploaded. Empty accepts any type."
+        Default: ="pdf,docx,xlsx,png,jpg"
+      MaxFiles:
+        PropertyKind: Input
+        DisplayName: MaxFiles
+        DataType: Number
+        Description: "The most files people can add before they upload. Files already attached don't count."
+        Default: =3
+      MaxFileSize:
+        PropertyKind: Input
+        DisplayName: MaxFileSize
+        DataType: Number
+        Description: "The largest file in megabytes (1 MB is 1,000,000 bytes). Power Apps' Attachments control refuses a bigger file with its own message."
+        Default: =10
+      AllowUpload:
+        PropertyKind: Input
+        DisplayName: AllowUpload
+        DataType: Boolean
+        Description: "Shows the drop card and the Upload button. Off, the card lists the files already attached."
+        Default: =true
+      AllowRemove:
+        PropertyKind: Input
+        DisplayName: AllowRemove
+        DataType: Boolean
+        Description: "Shows a remove button on each file already attached. Removing marks the file, with Undo, until the changes are saved."
+        Default: =true
+      IsUploading:
+        PropertyKind: Input
+        DisplayName: IsUploading
+        DataType: Boolean
+        Description: "Set it to true while your app saves (in OnSave), and back to false after: each file shows a moving bar, the button spins, and nothing can be changed."
+        Default: =false
+      ShowMeta:
+        PropertyKind: Input
+        DisplayName: ShowMeta
+        DataType: Text
+        Description: "Which details show under a file already attached: size, who, when, or any of them separated by commas. Empty shows none."
+        Default: ="size,who,when"
+      OpenOnSelect:
+        PropertyKind: Input
+        DisplayName: OpenOnSelect
+        DataType: Boolean
+        Description: "Opens an attached file's Url in a new tab when its row is selected, before OnOpen runs. Off, only OnOpen runs."
+        Default: =true
+      EmptyText:
+        PropertyKind: Input
+        DisplayName: EmptyText
+        DataType: Text
+        Description: "What the card says when AllowUpload is off and nothing is attached."
+        Default: ="No files yet"
+      MaxHeight:
+        PropertyKind: Input
+        DisplayName: MaxHeight
+        DataType: Number
+        Description: "The most height the files already attached take before they scroll. 0 grows with the list."
+        Default: =0
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for the drop card, the button, the focus rings and files of a type without a colour of its own."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "The arrow bobs when the card appears, tiles pop in, ticks draw in, and bars move while uploading. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      Count:
+        PropertyKind: Output
+        DisplayName: Count
+        DataType: Number
+        Description: "How many files are already attached."
+      TotalSize:
+        PropertyKind: Output
+        DisplayName: TotalSize
+        DataType: Number
+        Description: "The attached files' sizes added up, in bytes."
+      TotalSizeText:
+        PropertyKind: Output
+        DisplayName: TotalSizeText
+        DataType: Text
+        Description: "The total size as people read it, such as 1.8 MB."
+      ReadyCount:
+        PropertyKind: Output
+        DisplayName: ReadyCount
+        DataType: Number
+        Description: "How many added files are ready to upload."
+      StagedFiles:
+        PropertyKind: Output
+        DisplayName: StagedFiles
+        DataType: Table
+        Description: "The files ready to upload, with Name and Value as Power Apps' Attachments control gives them: for a SharePoint item's attachments or a Dataverse file column."
+      StagedFilesData:
+        PropertyKind: Output
+        DisplayName: StagedFilesData
+        DataType: Table
+        Description: "The files ready to upload as Name and ContentBytes (base64), for a flow that takes text. Built when the Upload button is selected, so read it in OnSave."
+      RemovedKeys:
+        PropertyKind: Output
+        DisplayName: RemovedKeys
+        DataType: Table
+        Description: "The Key of each attached file marked for removal, in a Key column."
+      HasChanges:
+        PropertyKind: Output
+        DisplayName: HasChanges
+        DataType: Boolean
+        Description: "True while there are files to upload or files to remove."
+      OnOpen:
+        PropertyKind: Event
+        DisplayName: OnOpen
+        ReturnType: None
+        Description: "Runs in your app when an attached file's row or Open is selected, with its key, name and link. Open a file your own way here, such as through a flow."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The file's Key."
+              Default: =""
+          - Name:
+              DataType: Text
+              Description: "The file's Name."
+              Default: =""
+          - Url:
+              DataType: Text
+              Description: "The file's Url, which may be empty."
+              Default: =""
+        Default: =false
+      OnSave:
+        PropertyKind: Event
+        DisplayName: OnSave
+        ReturnType: None
+        Description: "Runs in your app when Upload is selected, with how many files to upload and to remove. Save StagedFiles (or StagedFilesData for a flow) and remove RemovedKeys, with IsUploading true while you do, then Reset this component."
+        Parameters:
+          - Ready:
+              DataType: Number
+              Description: "How many files are ready to upload."
+              Default: =0
+          - Removed:
+              DataType: Number
+              Description: "How many attached files are marked for removal."
+              Default: =0
+        Default: =false
+      OnCancel:
+        PropertyKind: Event
+        DisplayName: OnCancel
+        ReturnType: None
+        Description: "Runs in your app after Cancel has cleared the added files and the removals, with how many changes were dropped."
+        Parameters:
+          - Discarded:
+              DataType: Number
+              Description: "How many added files and removals Cancel cleared."
+              Default: =0
+        Default: =false
+    Properties:
+      Width: =480
+      Height: |-
+        =With(
+            {after: ((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0)))},
+            If((lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0)), after + 70, after + 14)
+        )
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: |-
+        =Clear(colLcsAttachStaged);
+        Clear(colLcsAttachRemoved);
+        Clear(colLcsAttachPayload);
+        Reset(attPicker)
+      Count: =CountRows(lcsAttachmentList.Files)
+      TotalSize: =Sum(lcsAttachmentList.Files, Size)
+      TotalSizeText: |-
+        =With({b: Sum(lcsAttachmentList.Files, Size)}, If(b >= 1048576, Text(b / 1048576, "0.0") & " MB", b >= 1024, Text(Round(b / 1024, 0), "#,##0") & " KB", b & " B"))
+      ReadyCount: =CountRows(Filter(colLcsAttachStaged, Status = "Ready"))
+      StagedFiles: =ShowColumns(Filter(colLcsAttachStaged, Status = "Ready"), Name, Value)
+      StagedFilesData: =colLcsAttachPayload
+      RemovedKeys: =colLcsAttachRemoved
+      HasChanges: =!IsEmpty(Filter(colLcsAttachStaged, Status = "Ready")) || !IsEmpty(colLcsAttachRemoved)
+    Children:
+      - shpCard:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =4
+            Y: =2
+            Width: =Parent.Width - 8
+            Height: =Parent.Height - 8
+            Fill: =If(lcsAttachmentList.Theme = "Dark", RGBA(43, 43, 46, 1), RGBA(255, 255, 255, 1))
+            BorderColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(60, 60, 64, 1), RGBA(232, 234, 237, 1))
+            BorderThickness: =1
+            DropShadow: =DropShadow.Light
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+      - imgHeadIcon:
+          Control: Image@2.2.3
+          Properties:
+            X: =24
+            Y: =22
+            Width: =40
+            Height: =40
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='14' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "'/><g transform='translate(10 10) scale(.8333)'><path d='M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5' fill='none' stroke='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.75), ColorFade(lcsAttachmentList.AccentColor, -0.5))), 2, 7) & "' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></g></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - lblTitle:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =76
+            Y: =If(IsBlank(lcsAttachmentList.Subtitle), 31, 21)
+            Width: =Parent.Width - 100 - If(lcsAttachmentList.AllowUpload, RoundUp(Len(lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles)) * 6.6 + 20, 0) + 8, 0)
+            Height: =22
+            Text: =lcsAttachmentList.Title
+            Size: =16
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblSubtitle:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =76
+            Y: =43
+            Width: =Parent.Width - 100 - If(lcsAttachmentList.AllowUpload, RoundUp(Len(lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles)) * 6.6 + 20, 0) + 8, 0)
+            Height: =18
+            Visible: =!IsBlank(lcsAttachmentList.Subtitle)
+            Text: =lcsAttachmentList.Subtitle
+            Size: =13
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - imgCountPill:
+          Control: Image@2.2.3
+          Properties:
+            X: =Parent.Width - 24 - RoundUp(Len(lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles)) * 6.6 + 20, 0)
+            Y: =31
+            Width: =RoundUp(Len(lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles)) * 6.6 + 20, 0)
+            Height: =22
+            Visible: =lcsAttachmentList.AllowUpload
+            Image: |-
+              =With(
+                  {t: lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles), w: RoundUp(Len(lcsAttachmentList.ReadyCount & " of " & Max(1, lcsAttachmentList.MaxFiles)) * 6.6 + 20, 0)},
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " & w & " 22'><!-- " & t & " --><style>.p{transform-box:fill-box;transform-origin:center;animation:lcsAttPop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsAttPop{from{transform:scale(.7)}to{transform:scale(1)}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><g class='" & If(lcsAttachmentList.Motion, "p", "") & "'><rect width='" & w & "' height='22' rx='11' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "'/><text x='" & w / 2 & "' y='15' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='12' font-weight='700' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.75), ColorFade(lcsAttachmentList.AccentColor, -0.5))), 2, 7) & "'>" & t & "</text></g></svg>")
+              )
+            ImagePosition: =ImagePosition.Fit
+      - shpDrop:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =24
+            Y: =76
+            Width: =(Parent.Width - 48)
+            Height: =If((CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles)), 64, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64))
+            Visible: =lcsAttachmentList.AllowUpload
+            Fill: =If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), If(lcsAttachmentList.Theme = "Dark", RGBA(52, 52, 55, 1), RGBA(247, 248, 251, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(52, 52, 55, 1), ColorFade(lcsAttachmentList.AccentColor, 0.95)))
+            BorderColor: =If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), If(lcsAttachmentList.Theme = "Dark", RGBA(98, 100, 108, 1), RGBA(196, 199, 207, 1)), If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.1), ColorFade(lcsAttachmentList.AccentColor, 0.55)))
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =2
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+      - imgDropBubble:
+          Control: Image@2.2.3
+          Properties:
+            X: =24 + ((Parent.Width - 48) - 56) / 2
+            Y: =(76 + ((72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 146) / 2)
+            Width: =56
+            Height: =56
+            Visible: =lcsAttachmentList.AllowUpload && !(CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'>" & If(lcsAttachmentList.Motion, "<style>.b{animation:lcsAttBob 1.6s ease-in-out 3}@keyframes lcsAttBob{50%{transform:translateY(-3px)}}@media (prefers-reduced-motion:reduce){.b{animation:none}}</style>", "") & "<circle cx='28' cy='28' r='28' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "'/><g class='b'><g transform='translate(15 15) scale(1.0833)'><path d='M12 16V4M6 10l6-6 6 6M4 20h16' fill='none' stroke='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)), 2, 7) & "' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/></g></g></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - lblChoose:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24 + ((Parent.Width - 48) - 204) / 2
+            Y: =(76 + ((72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 146) / 2) + 68
+            Width: =80
+            Height: =20
+            Visible: =lcsAttachmentList.AllowUpload && !(CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Text: ="Choose files"
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            Underline: =true
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblDragHere:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24 + ((Parent.Width - 48) - 204) / 2 + 84
+            Y: =(76 + ((72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 146) / 2) + 68
+            Width: =120
+            Height: =20
+            Visible: =lcsAttachmentList.AllowUpload && !(CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Text: ="or drag them here"
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - imgChips:
+          Control: Image@2.2.3
+          Properties:
+            X: |-
+              =24 + ((Parent.Width - 48) - With({rows: With({types: FirstN(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value)), 8)}, ForAll(Sequence(CountRows(types)) As i, With({t: Upper(Index(types, i.Value).Value)}, {T: t, W: RoundUp(Len(t) * 7.6 + 18, 0)})))}, Sum(rows, W) + Max(0, CountRows(rows) - 1) * 6)) / 2
+            Y: =(76 + ((72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 146) / 2) + 98
+            Width: |-
+              =With({rows: With({types: FirstN(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value)), 8)}, ForAll(Sequence(CountRows(types)) As i, With({t: Upper(Index(types, i.Value).Value)}, {T: t, W: RoundUp(Len(t) * 7.6 + 18, 0)})))}, Sum(rows, W) + Max(0, CountRows(rows) - 1) * 6)
+            Height: =24
+            Visible: =lcsAttachmentList.AllowUpload && !(CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles)) && !IsEmpty(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value)))
+            Image: |-
+              =With(
+                  {rows: With({types: FirstN(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value)), 8)}, ForAll(Sequence(CountRows(types)) As i, With({t: Upper(Index(types, i.Value).Value)}, {T: t, W: RoundUp(Len(t) * 7.6 + 18, 0)})))},
+                  With(
+                      {placed: ForAll(Sequence(CountRows(rows)) As i, {T: Index(rows, i.Value).T, W: Index(rows, i.Value).W, X: Coalesce(Sum(FirstN(rows, i.Value - 1), W), 0) + (i.Value - 1) * 6}), total: Sum(rows, W) + Max(0, CountRows(rows) - 1) * 6},
+                      "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " & total & " 24'>" & Concat(placed, "<rect x='" & (X + 0.5) & "' y='1.5' width='" & (W - 1) & "' height='21' rx='8' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(43, 43, 46, 1), RGBA(255, 255, 255, 1))), 2, 7) & "' stroke='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(98, 100, 108, 1), RGBA(196, 199, 207, 1))), 2, 7) & "'/><text x='" & (X + W / 2) & "' y='16' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='11' font-weight='700' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))), 2, 7) & "'>" & T & "</text>") & "</svg>")
+                  )
+              )
+            ImagePosition: =ImagePosition.Fit
+      - lblLimits:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24
+            Y: =(76 + ((72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 146) / 2) + 130
+            Width: =(Parent.Width - 48)
+            Height: =16
+            Visible: =lcsAttachmentList.AllowUpload && !(CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Text: =If(IsEmpty(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value))), "Any type · ", "") & "Up to " & lcsAttachmentList.MaxFileSize & " MB each · " & If(Max(1, lcsAttachmentList.MaxFiles) = 1, "1 file", Max(1, lcsAttachmentList.MaxFiles) & " files at most")
+            Size: =12
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Align: =Align.Center
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - imgStripBubble:
+          Control: Image@2.2.3
+          Properties:
+            X: =38
+            Y: =90
+            Width: =36
+            Height: =36
+            Visible: =lcsAttachmentList.AllowUpload && (CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><circle cx='18' cy='18' r='18' fill='" & If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(98, 100, 108, 1), RGBA(196, 199, 207, 1))), 2, 7), Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7)) & "'/><g transform='translate(8 8) scale(.8333)'><path d='" & If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), "M5 12.5l4.5 4.5L19 7.5", "M12 16V4M6 10l6-6 6 6M4 20h16") & "' fill='none' stroke='" & If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))), 2, 7), Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)), 2, 7)) & "' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></g></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - lblStripTitle:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =86
+            Y: =88
+            Width: =(Parent.Width - 48) - 76
+            Height: =20
+            Visible: =lcsAttachmentList.AllowUpload && (CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Text: =If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), "That's the most you can add", "Choose more files or drag them here")
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1)), If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblStripHint:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =86
+            Y: =108
+            Width: =(Parent.Width - 48) - 76
+            Height: =18
+            Visible: =lcsAttachmentList.AllowUpload && (CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Text: =If(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles), "Remove one to add another.", If(IsEmpty(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value))), "Any type", Concat(FirstN(Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value)), 8), Upper(Value), ", ")) & " · up to " & lcsAttachmentList.MaxFileSize & " MB each")
+            Size: =12
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - conDrop:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =24
+            Y: =76
+            Width: =(Parent.Width - 48)
+            Height: =If((CountRows(colLcsAttachStaged) > 0 || lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles)), 64, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64))
+            Visible: =lcsAttachmentList.AllowUpload && !lcsAttachmentList.IsUploading && !(lcsAttachmentList.ReadyCount >= Max(1, lcsAttachmentList.MaxFiles))
+            Fill: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+          Children:
+            - attPicker:
+                Control: Attachments@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width + 28
+                  Height: =Parent.Height
+                  Items: =Blank()
+                  AccessibleLabel: |-
+                    =lcsAttachmentList.Title & ": add files"
+                  AddAttachmentText: =""
+                  NoAttachmentsText: =""
+                  MaxAttachmentsText: =""
+                  MaxAttachments: =Max(1, Max(1, lcsAttachmentList.MaxFiles) - lcsAttachmentList.ReadyCount)
+                  MaxAttachmentSize: =Max(1, lcsAttachmentList.MaxFileSize)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderThickness: =0
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.04), RGBA(0, 0, 0, 0.03))
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  DropTargetBackgroundColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))
+                  DropTargetBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  DropTargetBorderStyle: =BorderStyle.Solid
+                  DropTargetBorderThickness: =2
+                  DropTargetTextColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.75), ColorFade(lcsAttachmentList.AccentColor, -0.5))
+                  OnAddFile: |-
+                    =Set(
+                        locAttIncoming,
+                        Filter(Self.Attachments As n, IsBlank(LookUp(colLcsAttachStaged As s, Lower(s.Name) = Lower(n.Name))))
+                    );
+                    ForAll(
+                        locAttIncoming As a,
+                        Collect(
+                            colLcsAttachStaged,
+                            With(
+                                {
+                                    ext: With({e: Lower(Last(Split(a.Name, ".")).Value)}, If(e = Lower(a.Name), "", e)),
+                                    accepted: Filter(ForAll(Split(Lower(lcsAttachmentList.AcceptedTypes), ",") As t, Substitute(Trim(t.Value), ".", "")), !IsBlank(Value))
+                                },
+                                {
+                                    Key: Text(GUID()),
+                                    Name: a.Name,
+                                    Value: a.Value,
+                                    Ext: ext,
+                                    Status: If(
+                                        !IsEmpty(accepted) && IsBlank(LookUp(accepted, Value = ext)), "Type",
+                                        !IsBlank(LookUp(lcsAttachmentList.Files As f, Lower(f.Name) = Lower(a.Name))), "Attached",
+                                        "Ready"
+                                    )
+                                }
+                            )
+                        )
+                    );
+                    Reset(Self)
+      - galStaged:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =24
+            Y: =148
+            Width: =(Parent.Width - 48)
+            Height: =(72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 72
+            Visible: =lcsAttachmentList.AllowUpload && CountRows(colLcsAttachStaged) > 0
+            Items: =colLcsAttachStaged
+            TemplateSize: =64
+            TemplatePadding: =0
+            ShowScrollbar: =CountRows(colLcsAttachStaged) * 64 > (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) - 72
+            AccessibleLabel: ="Files to upload"
+          Children:
+            - imgBlob:
+                Control: Image@2.2.3
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =1
+                  Height: =1
+                  Image: =ThisItem.Value
+            - shpStagedRow:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =56
+                  Fill: =If(ThisItem.Status = "Ready", If(lcsAttachmentList.Theme = "Dark", RGBA(52, 52, 55, 1), RGBA(247, 248, 251, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(74, 42, 46, 1), RGBA(253, 236, 238, 1)))
+                  BorderThickness: =0
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+            - imgStagedTile:
+                Control: Image@2.2.3
+                Properties:
+                  X: =12
+                  Y: =8
+                  Width: =40
+                  Height: =40
+                  Image: |-
+                    =With(
+                                          {e: ThisItem.Ext, dark: lcsAttachmentList.Theme = "Dark"},
+                                          With({tone: If(ThisItem.Status = "Type", If(dark, "#5c2229|#ffb3bb", "#fbd8dc|#a4262c"), Switch(     e,     "pdf", If(dark, "#4a1c20|#ffb3b8", "#fde7e9|#a4262c"),     "doc", If(dark, "#16324d|#a8d1f5", "#deecf9|#0f5c99"), "docx", If(dark, "#16324d|#a8d1f5", "#deecf9|#0f5c99"),     "xls", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"), "xlsx", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"), "csv", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"),     "ppt", If(dark, "#4a2614|#fdba95", "#fde5d9|#9a3412"), "pptx", If(dark, "#4a2614|#fdba95", "#fde5d9|#9a3412"),     "png", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "jpg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "jpeg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "gif", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "svg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "heic", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"),     "zip", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"), "rar", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"), "7z", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"),     "msg", If(dark, "#123553|#a6d0f5", "#dcecfb|#005a9e"), "eml", If(dark, "#123553|#a6d0f5", "#dcecfb|#005a9e"),     Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "|" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.75), ColorFade(lcsAttachmentList.AccentColor, -0.5))), 2, 7) ))}, "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><!-- " & ThisItem.Key & " --><style>.p{transform-box:fill-box;transform-origin:center;animation:lcsTilePop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsTilePop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><g opacity='" & If(false, "0.45", "1") & "' class='" & If(lcsAttachmentList.Motion, "p", "") & "'><rect width='40' height='40' rx='12' fill='" & First(Split(tone, "|")).Value & "'/><text x='20' y='24.5' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='" & If(Len(If(IsBlank(ThisItem.Ext), "FILE", Upper(Left(ThisItem.Ext, 4)))) <= 3, 11, 9.5) & "' font-weight='800' fill='" & Last(Split(tone, "|")).Value & "'>" & If(IsBlank(ThisItem.Ext), "FILE", Upper(Left(ThisItem.Ext, 4))) & "</text></g></svg>")))
+                  ImagePosition: =ImagePosition.Fit
+            - lblStagedName:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =64
+                  Y: =8
+                  Width: =Parent.TemplateWidth - 116
+                  Height: =20
+                  Text: =ThisItem.Name
+                  Size: =14
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - imgStatus:
+                Control: Image@2.2.3
+                Properties:
+                  X: =64
+                  Y: =32
+                  Width: =14
+                  Height: =14
+                  Visible: =!(lcsAttachmentList.IsUploading && ThisItem.Status = "Ready")
+                  Image: |-
+                    =If(
+                        ThisItem.Status = "Ready",
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>" & If(lcsAttachmentList.Motion, "<style>path{animation:lcsAttDraw .4s ease-out}@keyframes lcsAttDraw{from{stroke-dashoffset:22}}@media (prefers-reduced-motion:reduce){path{animation:none}}</style>", "") & "<!-- " & ThisItem.Key & " --><path d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(154, 215, 154, 1), RGBA(14, 112, 14, 1))), 2, 7) & "' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' stroke-dasharray='22'/></svg>"),
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>" & If(lcsAttachmentList.Motion, "<style>g{animation:lcsAttShake .45s ease-in-out}@keyframes lcsAttShake{20%{transform:translateX(-2px)}40%{transform:translateX(2px)}60%{transform:translateX(-1px)}80%{transform:translateX(1px)}}@media (prefers-reduced-motion:reduce){g{animation:none}}</style>", "") & "<!-- " & ThisItem.Key & " --><g><circle cx='12' cy='12' r='11' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(255, 179, 187, 1), RGBA(179, 38, 30, 1))), 2, 7) & "'/><path d='M12 6.5v7' stroke='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(74, 42, 46, 1), RGBA(253, 236, 238, 1))), 2, 7) & "' stroke-width='2.6' stroke-linecap='round'/><circle cx='12' cy='17.3' r='1.6' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", RGBA(74, 42, 46, 1), RGBA(253, 236, 238, 1))), 2, 7) & "'/></g></svg>")
+                    )
+                  ImagePosition: =ImagePosition.Fit
+            - lblStatus:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsAttachmentList.IsUploading && ThisItem.Status = "Ready", 64, 84)
+                  Y: =29
+                  Width: =Parent.TemplateWidth - 136
+                  Height: =18
+                  Text: |-
+                    =Switch(
+                        ThisItem.Status,
+                        "Ready", If(lcsAttachmentList.IsUploading, "Uploading…", "Ready to upload"),
+                        "Type", If(IsBlank(ThisItem.Ext), "Not accepted: this file has no type", "Not accepted: " & Upper(ThisItem.Ext) & " isn't an accepted type"),
+                        "Attached", "Not added: it's already attached",
+                        ""
+                    )
+                  Size: =12
+                  Color: =If(lcsAttachmentList.IsUploading && ThisItem.Status = "Ready", If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)), ThisItem.Status = "Ready", If(lcsAttachmentList.Theme = "Dark", RGBA(154, 215, 154, 1), RGBA(14, 112, 14, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(255, 179, 187, 1), RGBA(179, 38, 30, 1)))
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - imgProgress:
+                Control: Image@2.2.3
+                Properties:
+                  X: =64
+                  Y: =49
+                  Width: =Parent.TemplateWidth - 116
+                  Height: =4
+                  Visible: =lcsAttachmentList.IsUploading && ThisItem.Status = "Ready"
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 4' preserveAspectRatio='none'>" & If(lcsAttachmentList.Motion, "<style>.m{animation:lcsAttSlide 1.1s ease-in-out infinite}@keyframes lcsAttSlide{from{transform:translateX(-40px)}to{transform:translateX(100px)}}@media (prefers-reduced-motion:reduce){.m{animation:none}}</style>", "") & "<rect width='100' height='4' rx='2' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "'/><rect class='m' width='40' height='4' rx='2' fill='" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)), 2, 7) & "'/></svg>")
+                  ImagePosition: =ImagePosition.Stretch
+            - imgStagedRemove:
+                Control: Image@2.2.3
+                Properties:
+                  X: =Parent.TemplateWidth - 35
+                  Y: =19
+                  Width: =18
+                  Height: =18
+                  Visible: =!lcsAttachmentList.IsUploading
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 6l12 12M18 6L6 18' fill='none' stroke='" & If(lcsAttachmentList.Theme = "Dark", "#c4c7cf", "#44474e") & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+                  ImagePosition: =ImagePosition.Fit
+            - btnStagedRemove:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 44
+                  Y: =10
+                  Width: =36
+                  Height: =36
+                  Visible: =!lcsAttachmentList.IsUploading
+                  Text: ="Remove " & ThisItem.Name
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.1))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =18
+                  RadiusTopRight: =18
+                  RadiusBottomLeft: =18
+                  RadiusBottomRight: =18
+                  Tooltip: ="Remove"
+                  OnSelect: |-
+                    =Remove(colLcsAttachStaged, ThisItem)
+      - lblAttachedHead:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24
+            Y: =(76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0))
+            Width: =(Parent.Width - 48) - 128
+            Height: =20
+            Visible: =CountRows(lcsAttachmentList.Files) > 0
+            Text: =If(lcsAttachmentList.AllowUpload, "Already attached (", "Attached (") & CountRows(lcsAttachmentList.Files) & ")"
+            Size: =12
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblAttachedTotal:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =Parent.Width - 144
+            Y: =(76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0))
+            Width: =120
+            Height: =20
+            Visible: =CountRows(lcsAttachmentList.Files) > 0 && lcsAttachmentList.TotalSize > 0
+            Text: =lcsAttachmentList.TotalSizeText
+            Size: =12
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Align: =Align.Right
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - galAttached:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =24
+            Y: =(76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + 28
+            Width: =(Parent.Width - 48)
+            Height: |-
+              =With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h))
+            Visible: =CountRows(lcsAttachmentList.Files) > 0
+            Items: |-
+              =ForAll(
+                  lcsAttachmentList.Files As f,
+                  With(
+                      {ext: Lower(Last(Split(f.Name, ".")).Value), dark: lcsAttachmentList.Theme = "Dark"},
+                      With(
+                          {
+                              e: If(ext = Lower(f.Name), "", ext),
+                              tone: Switch(
+                                  If(ext = Lower(f.Name), "", ext),
+                                  "pdf", If(dark, "#4a1c20|#ffb3b8", "#fde7e9|#a4262c"),
+                                  "doc", If(dark, "#16324d|#a8d1f5", "#deecf9|#0f5c99"), "docx", If(dark, "#16324d|#a8d1f5", "#deecf9|#0f5c99"),
+                                  "xls", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"), "xlsx", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"), "csv", If(dark, "#163a16|#a7e3a3", "#dff6dd|#0e700e"),
+                                  "ppt", If(dark, "#4a2614|#fdba95", "#fde5d9|#9a3412"), "pptx", If(dark, "#4a2614|#fdba95", "#fde5d9|#9a3412"),
+                                  "png", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "jpg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "jpeg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "gif", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "svg", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"), "heic", If(dark, "#2e2154|#d4c2ff", "#efe6ff|#5b21b6"),
+                                  "zip", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"), "rar", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"), "7z", If(dark, "#333638|#c9cdd1", "#eceff1|#424242"),
+                                  "msg", If(dark, "#123553|#a6d0f5", "#dcecfb|#005a9e"), "eml", If(dark, "#123553|#a6d0f5", "#dcecfb|#005a9e"),
+                                  Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, -0.55), ColorFade(lcsAttachmentList.AccentColor, 0.85))), 2, 7) & "|" & Mid(JSON(If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.75), ColorFade(lcsAttachmentList.AccentColor, -0.5))), 2, 7)
+                              )
+                          },
+                          {
+                              Key: f.Key,
+                              Name: f.Name,
+                              Size: f.Size,
+                              Url: f.Url,
+                              Who: f.Who,
+                              When: f.When,
+                              Label: If(IsBlank(e), "FILE", Upper(Left(e, 4))),
+                              Bg: First(Split(tone, "|")).Value,
+                              Fg: Last(Split(tone, "|")).Value,
+                              Removed: !IsBlank(LookUp(colLcsAttachRemoved As r, r.Key = f.Key))
+                          }
+                      )
+                  )
+              )
+            TemplateSize: =64
+            TemplatePadding: =0
+            ShowScrollbar: =lcsAttachmentList.MaxHeight > 0
+            AccessibleLabel: ="Files already attached"
+          Children:
+            - shpAttRow:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =56
+                  Fill: =If(lcsAttachmentList.Theme = "Dark", RGBA(52, 52, 55, 1), RGBA(247, 248, 251, 1))
+                  BorderThickness: =0
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+            - imgAttTile:
+                Control: Image@2.2.3
+                Properties:
+                  X: =12
+                  Y: =8
+                  Width: =40
+                  Height: =40
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><!-- " & ThisItem.Key & " --><style>.p{transform-box:fill-box;transform-origin:center;animation:lcsTilePop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsTilePop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><g opacity='" & If(ThisItem.Removed, "0.45", "1") & "' class='" & If(lcsAttachmentList.Motion, "p", "") & "'><rect width='40' height='40' rx='12' fill='" & ThisItem.Bg & "'/><text x='20' y='24.5' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='" & If(Len(ThisItem.Label) <= 3, 11, 9.5) & "' font-weight='800' fill='" & ThisItem.Fg & "'>" & ThisItem.Label & "</text></g></svg>")
+                  ImagePosition: =ImagePosition.Fit
+            - lblAttName:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =64
+                  Y: =If(IsBlank(lcsAttachmentList.ShowMeta) && !ThisItem.Removed, 0, 8)
+                  Width: =Parent.TemplateWidth - 64 - (52 + If(lcsAttachmentList.AllowRemove, 44, 0))
+                  Height: =If(IsBlank(lcsAttachmentList.ShowMeta) && !ThisItem.Removed, 56, 20)
+                  Text: =ThisItem.Name
+                  Size: =14
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(ThisItem.Removed, If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1)))
+                  Strikethrough: =ThisItem.Removed
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblAttMeta:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =64
+                  Y: =29
+                  Width: =Parent.TemplateWidth - 64 - (52 + If(lcsAttachmentList.AllowRemove, 44, 0))
+                  Height: =18
+                  Visible: =!(IsBlank(lcsAttachmentList.ShowMeta) && !ThisItem.Removed)
+                  Text: |-
+                    =With(
+                        {
+                            parts: Lower(lcsAttachmentList.ShowMeta),
+                            size: If(ThisItem.Size >= 1048576, Text(ThisItem.Size / 1048576, "0.0") & " MB", ThisItem.Size >= 1024, Text(Round(ThisItem.Size / 1024, 0), "#,##0") & " KB", ThisItem.Size > 0, ThisItem.Size & " B", "")
+                        },
+                        If(
+                            ThisItem.Removed, "Removed when you save",
+                            Concat(
+                                Filter(
+                                    Table(
+                                        {Order: 1, Value: If("size" in parts, size, "")},
+                                        {Order: 2, Value: If("who" in parts, ThisItem.Who, "")},
+                                        {Order: 3, Value: If("when" in parts && !IsBlank(ThisItem.When), Text(ThisItem.When, "d mmm yyyy"), "")}
+                                    ),
+                                    !IsBlank(Value)
+                                ),
+                                Value,
+                                " · "
+                            )
+                        )
+                    )
+                  Size: =12
+                  Color: =If(ThisItem.Removed, If(lcsAttachmentList.Theme = "Dark", RGBA(255, 179, 187, 1), RGBA(179, 38, 30, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)))
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - btnAttRow:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth - (52 + If(lcsAttachmentList.AllowRemove, 44, 0))
+                  Height: =56
+                  Text: =If(lcsAttachmentList.OpenOnSelect && !IsBlank(ThisItem.Url), "Open ", "Select ") & ThisItem.Name & If(ThisItem.Removed, ", removed when you save", "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.1))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+                  Tooltip: =ThisItem.Name
+                  OnSelect: |-
+                    =If(lcsAttachmentList.OpenOnSelect && !IsBlank(ThisItem.Url), Launch(ThisItem.Url));
+                    lcsAttachmentList.OnOpen(ThisItem.Key, ThisItem.Name, ThisItem.Url)
+            - btnUndo:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =196
+                  Y: =27
+                  Width: =48
+                  Height: =22
+                  Visible: =ThisItem.Removed && !lcsAttachmentList.IsUploading
+                  Text: ="Undo"
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  Size: =9
+                  FontWeight: =FontWeight.Semibold
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  HoverColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.1))
+                  PressedColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =11
+                  RadiusTopRight: =11
+                  RadiusBottomLeft: =11
+                  RadiusBottomRight: =11
+                  Tooltip: ="Keep " & ThisItem.Name
+                  OnSelect: |-
+                    =RemoveIf(colLcsAttachRemoved, Key = ThisItem.Key)
+            - imgAttOpen:
+                Control: Image@2.2.3
+                Properties:
+                  X: =Parent.TemplateWidth - 8 - If(lcsAttachmentList.AllowRemove, 44, 0) - 36 + 9
+                  Y: =19
+                  Width: =18
+                  Height: =18
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5' fill='none' stroke='" & If(lcsAttachmentList.Theme = "Dark", "#c4c7cf", "#44474e") & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+                  ImagePosition: =ImagePosition.Fit
+            - btnAttOpen:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 8 - If(lcsAttachmentList.AllowRemove, 44, 0) - 36
+                  Y: =10
+                  Width: =36
+                  Height: =36
+                  Text: ="Open " & ThisItem.Name
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.1))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =18
+                  RadiusTopRight: =18
+                  RadiusBottomLeft: =18
+                  RadiusBottomRight: =18
+                  Tooltip: ="Open"
+                  OnSelect: |-
+                    =If(!IsBlank(ThisItem.Url), Launch(ThisItem.Url));
+                    lcsAttachmentList.OnOpen(ThisItem.Key, ThisItem.Name, ThisItem.Url)
+            - imgAttRemove:
+                Control: Image@2.2.3
+                Properties:
+                  X: =Parent.TemplateWidth - 35
+                  Y: =19
+                  Width: =18
+                  Height: =18
+                  Visible: =lcsAttachmentList.AllowRemove && !ThisItem.Removed && !lcsAttachmentList.IsUploading
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 6l12 12M18 6L6 18' fill='none' stroke='" & If(lcsAttachmentList.Theme = "Dark", "#c4c7cf", "#44474e") & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+                  ImagePosition: =ImagePosition.Fit
+            - btnAttRemove:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 44
+                  Y: =10
+                  Width: =36
+                  Height: =36
+                  Visible: =lcsAttachmentList.AllowRemove && !ThisItem.Removed && !lcsAttachmentList.IsUploading
+                  Text: ="Remove " & ThisItem.Name
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.06))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.1))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =18
+                  RadiusTopRight: =18
+                  RadiusBottomLeft: =18
+                  RadiusBottomRight: =18
+                  Tooltip: ="Remove"
+                  OnSelect: |-
+                    =Collect(colLcsAttachRemoved, {Key: ThisItem.Key})
+      - lblEmpty:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24
+            Y: =(76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0))
+            Width: =(Parent.Width - 48)
+            Height: =48
+            Visible: =!lcsAttachmentList.AllowUpload && CountRows(lcsAttachmentList.Files) = 0
+            Text: =lcsAttachmentList.EmptyText
+            Size: =14
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblSummary:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =24
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4)
+            Width: =(Parent.Width - 48) - 272
+            Height: =40
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            Text: |-
+              =With(
+                  {
+                      r: lcsAttachmentList.ReadyCount,
+                      bad: CountRows(Filter(colLcsAttachStaged, Status <> "Ready")),
+                      rm: CountRows(colLcsAttachRemoved)
+                  },
+                  If(
+                      lcsAttachmentList.IsUploading, "Uploading " & r & If(r = 1, " file", " files"),
+                      r + bad + rm = 0, If(lcsAttachmentList.AllowUpload, "Nothing added yet", "No changes"),
+                      Concat(Filter(Table({Order: 1, T: If(r > 0, r & " ready", "")}, {Order: 2, T: If(bad > 0, bad & " not accepted", "")}, {Order: 3, T: If(rm > 0, rm & " to remove", "")}), !IsBlank(T)), T, " · ")
+                  )
+              )
+            Size: =12
+            Color: =If(lcsAttachmentList.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            Wrap: =true
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - btnCancel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 24 - 160 - 8 - 96
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4)
+            Width: =96
+            Height: =40
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            DisplayMode: =If(!lcsAttachmentList.IsUploading && (CountRows(colLcsAttachStaged) > 0 || !IsEmpty(colLcsAttachRemoved)), DisplayMode.Edit, DisplayMode.Disabled)
+            Text: ="Cancel"
+            Size: =10.5
+            FontWeight: =FontWeight.Semibold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            BorderColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(142, 144, 153, 1), RGBA(116, 119, 127, 1))
+            BorderThickness: =1
+            HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.08), ColorFade(lcsAttachmentList.AccentColor, 0.92))
+            HoverColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            HoverBorderColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(142, 144, 153, 1), RGBA(116, 119, 127, 1))
+            PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(255, 255, 255, 0.14), ColorFade(lcsAttachmentList.AccentColor, 0.85))
+            PressedColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            PressedBorderColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(142, 144, 153, 1), RGBA(116, 119, 127, 1))
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.38), RGBA(27, 27, 31, 0.38))
+            DisabledBorderColor: =If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.12), RGBA(27, 27, 31, 0.12))
+            FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            OnSelect: |-
+              =With(
+                  {dropped: CountRows(colLcsAttachStaged) + CountRows(colLcsAttachRemoved)},
+                  Clear(colLcsAttachStaged);
+                  Clear(colLcsAttachRemoved);
+                  Reset(attPicker);
+                  lcsAttachmentList.OnCancel(dropped)
+              )
+      - shpMain:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =Parent.Width - 24 - 160
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4)
+            Width: =160
+            Height: =40
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            Fill: =If(!lcsAttachmentList.IsUploading && lcsAttachmentList.HasChanges || lcsAttachmentList.IsUploading, If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.12), RGBA(27, 27, 31, 0.12)))
+            BorderThickness: =0
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+      - imgMainIcon:
+          Control: Image@2.2.3
+          Properties:
+            X: =shpMain.X + (160 - 24 - RoundUp(Sum(ForAll(Split(If(lcsAttachmentList.IsUploading, "Uploading…", lcsAttachmentList.ReadyCount > 0, "Upload " & lcsAttachmentList.ReadyCount & If(lcsAttachmentList.ReadyCount = 1, " file", " files"), CountRows(colLcsAttachRemoved) > 0, "Save changes", "Upload"), "") As ch, If(ch.Value exactin "iljI.,:;'!|", 0.26, ch.Value exactin "frt", 0.35, ch.Value = " ", 0.28, ch.Value exactin "scz", 0.45, ch.Value exactin "mwMW", 0.86, IsMatch(ch.Value, "[A-Z]"), 0.66, 0.56)), Value) * 14 * 1.04, 0) + 4) / 2
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4) + 12
+            Width: =16
+            Height: =16
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            Image: |-
+              =If(
+                  lcsAttachmentList.IsUploading,
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>" & If(lcsAttachmentList.Motion, "<style>.r{transform-origin:12px 12px;animation:lcsAttSpin .9s linear infinite}@keyframes lcsAttSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.r{animation:none}}</style>", "") & "<path class='r' d='M12 3a9 9 0 1 0 9 9' fill='none' stroke='" & Mid(JSON(If(!lcsAttachmentList.IsUploading && lcsAttachmentList.HasChanges || lcsAttachmentList.IsUploading, If(lcsAttachmentList.Theme = "Dark", RGBA(26, 28, 30, 1), RGBA(255, 255, 255, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.38), RGBA(27, 27, 31, 0.38)))), 2, 7) & "' stroke-width='2.8' stroke-linecap='round'/></svg>"),
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 16V4M6 10l6-6 6 6M4 20h16' fill='none' stroke='" & Mid(JSON(If(!lcsAttachmentList.IsUploading && lcsAttachmentList.HasChanges || lcsAttachmentList.IsUploading, If(lcsAttachmentList.Theme = "Dark", RGBA(26, 28, 30, 1), RGBA(255, 255, 255, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.38), RGBA(27, 27, 31, 0.38)))), 2, 7) & "' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+              )
+            ImagePosition: =ImagePosition.Fit
+      - lblMain:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =shpMain.X + (160 - 24 - RoundUp(Sum(ForAll(Split(If(lcsAttachmentList.IsUploading, "Uploading…", lcsAttachmentList.ReadyCount > 0, "Upload " & lcsAttachmentList.ReadyCount & If(lcsAttachmentList.ReadyCount = 1, " file", " files"), CountRows(colLcsAttachRemoved) > 0, "Save changes", "Upload"), "") As ch, If(ch.Value exactin "iljI.,:;'!|", 0.26, ch.Value exactin "frt", 0.35, ch.Value = " ", 0.28, ch.Value exactin "scz", 0.45, ch.Value exactin "mwMW", 0.86, IsMatch(ch.Value, "[A-Z]"), 0.66, 0.56)), Value) * 14 * 1.04, 0) + 4) / 2 + 24
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4)
+            Width: =RoundUp(Sum(ForAll(Split(If(lcsAttachmentList.IsUploading, "Uploading…", lcsAttachmentList.ReadyCount > 0, "Upload " & lcsAttachmentList.ReadyCount & If(lcsAttachmentList.ReadyCount = 1, " file", " files"), CountRows(colLcsAttachRemoved) > 0, "Save changes", "Upload"), "") As ch, If(ch.Value exactin "iljI.,:;'!|", 0.26, ch.Value exactin "frt", 0.35, ch.Value = " ", 0.28, ch.Value exactin "scz", 0.45, ch.Value exactin "mwMW", 0.86, IsMatch(ch.Value, "[A-Z]"), 0.66, 0.56)), Value) * 14 * 1.04, 0) + 4
+            Height: =40
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            Text: =If(lcsAttachmentList.IsUploading, "Uploading…", lcsAttachmentList.ReadyCount > 0, "Upload " & lcsAttachmentList.ReadyCount & If(lcsAttachmentList.ReadyCount = 1, " file", " files"), CountRows(colLcsAttachRemoved) > 0, "Save changes", "Upload")
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(!lcsAttachmentList.IsUploading && lcsAttachmentList.HasChanges || lcsAttachmentList.IsUploading, If(lcsAttachmentList.Theme = "Dark", RGBA(26, 28, 30, 1), RGBA(255, 255, 255, 1)), If(lcsAttachmentList.Theme = "Dark", RGBA(241, 241, 243, 0.38), RGBA(27, 27, 31, 0.38)))
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - btnMain:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 24 - 160
+            Y: |-
+              =(((76 + If(lcsAttachmentList.AllowUpload, (72 + Min(Max(1, lcsAttachmentList.MaxFiles), 3) * 64) + 16, 0)) + If(CountRows(lcsAttachmentList.Files) > 0, 28 + With({h: 64 * CountRows(lcsAttachmentList.Files)}, If(lcsAttachmentList.MaxHeight > 0, Min(lcsAttachmentList.MaxHeight, h), h)) + 12, If(!lcsAttachmentList.AllowUpload, 60, 0))) + 4)
+            Width: =160
+            Height: =40
+            Visible: =(lcsAttachmentList.AllowUpload || (lcsAttachmentList.AllowRemove && CountRows(lcsAttachmentList.Files) > 0))
+            DisplayMode: =If(!lcsAttachmentList.IsUploading && lcsAttachmentList.HasChanges, DisplayMode.Edit, DisplayMode.Disabled)
+            Text: =If(lcsAttachmentList.IsUploading, "Uploading…", lcsAttachmentList.ReadyCount > 0, "Upload " & lcsAttachmentList.ReadyCount & If(lcsAttachmentList.ReadyCount = 1, " file", " files"), CountRows(colLcsAttachRemoved) > 0, "Save changes", "Upload")
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(0, 0, 0, 0.08), RGBA(255, 255, 255, 0.12))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsAttachmentList.Theme = "Dark", RGBA(0, 0, 0, 0.14), RGBA(255, 255, 255, 0.2))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsAttachmentList.Theme = "Dark", ColorFade(lcsAttachmentList.AccentColor, 0.45), lcsAttachmentList.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            OnSelect: |-
+              =ClearCollect(
+                  colLcsAttachPayload,
+                  ForAll(
+                      Filter(galStaged.AllItems, Status = "Ready") As r,
+                      {
+                          Name: r.Name,
+                          ContentBytes: With(
+                              {j: JSON(r.imgBlob.Image, JSONFormat.IncludeBinaryData)},
+                              Mid(j, Find(",", j) + 1, Len(j) - Find(",", j) - 1)
+                          )
+                      }
+                  )
+              );
+              lcsAttachmentList.OnSave(lcsAttachmentList.ReadyCount, CountRows(colLcsAttachRemoved))

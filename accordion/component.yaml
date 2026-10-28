@@ -1,0 +1,243 @@
+ComponentDefinitions:
+  lcsAccordion:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks accordion: expandable sections from a table of titles and text, one open at a time or several, each row growing to fit its text, with OpenKeys and OnToggle, Toggle, ExpandAll and CollapseAll, light and dark, each section a rounded tile, and the open one's chevron circle popping in."
+    CustomProperties:
+      Items:
+        PropertyKind: Input
+        DisplayName: Items
+        DataType: Table
+        Description: "The sections, as a table with Key, Title and Body columns, such as Table({Key: \"hours\", Title: \"Opening hours\", Body: \"Weekdays 8 to 6.\"})."
+        Default: |-
+          =Table({Key: "what", Title: "What is this app for?", Body: "Raising and tracking requests with the facilities team, from a broken light to a new desk. Every request gets a number and you can see its status here."}, {Key: "who", Title: "Who can see my request?", Body: "You, the facilities team and your manager. Nobody else, unless you add them."}, {Key: "long", Title: "How long does it take?", Body: "Most requests are closed within three working days. Urgent ones are picked up within the hour during opening hours."})
+      MultipleOpen:
+        PropertyKind: Input
+        DisplayName: MultipleOpen
+        DataType: Boolean
+        Description: "Lets several sections be open at once. Off, opening one closes the others."
+        Default: =false
+      DefaultOpenKeys:
+        PropertyKind: Input
+        DisplayName: DefaultOpenKeys
+        DataType: Text
+        Description: "The sections open when the screen loads, by Key, separated by commas."
+        Default: =""
+      BodySize:
+        PropertyKind: Input
+        DisplayName: BodySize
+        DataType: Number
+        Description: "The text size of a section's body."
+        Default: =14
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for the open section's chevron circle and the focus ring."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "The chevron's circle pops in as a section opens. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      OpenKeys:
+        PropertyKind: Output
+        DisplayName: OpenKeys
+        DataType: Text
+        Description: "The open sections' keys, separated by commas; empty when all are closed."
+      OpenCount:
+        PropertyKind: Output
+        DisplayName: OpenCount
+        DataType: Number
+        Description: "How many sections are open."
+      OnToggle:
+        PropertyKind: Event
+        DisplayName: OnToggle
+        ReturnType: None
+        Description: "Runs in your app when a section opens or closes, with its key and whether it's open now."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The section's Key."
+              Default: =""
+          - IsOpen:
+              DataType: Boolean
+              Description: "True when the section is open now."
+              Default: =false
+        Default: =false
+      Toggle:
+        PropertyKind: Action
+        DisplayName: Toggle
+        ReturnType: None
+        Description: "Opens a section, or closes it if it's open, by Key, such as from a link elsewhere on the screen."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The section's Key."
+              Default: =""
+      ExpandAll:
+        PropertyKind: Action
+        DisplayName: ExpandAll
+        ReturnType: None
+        Description: "Opens every section. With MultipleOpen off, opens the first."
+      CollapseAll:
+        PropertyKind: Action
+        DisplayName: CollapseAll
+        ReturnType: None
+        Description: "Closes every section."
+    Properties:
+      Width: =560
+      Height: =400
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: |-
+        =Set(locOpen, lcsAccordion.DefaultOpenKeys);
+        Set(locTouched, false)
+      OpenKeys: =If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys)
+      OpenCount: |-
+        =CountRows(Filter(ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), {Key: Trim(ThisRecord.Value)}), !IsBlank(Key)))
+      Toggle: |-
+        =With(
+            {
+                was: Filter(ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), {Key: Trim(ThisRecord.Value)}), !IsBlank(Key)),
+                k: Trim(Key)
+            },
+            Set(locTouched, true);
+            If(
+                k in was.Key,
+                Set(locOpen, Concat(Filter(was, Key <> k), Key, ",")),
+                Set(locOpen, If(lcsAccordion.MultipleOpen, Concat(was, Key, ",") & If(CountRows(was) > 0, ",", "") & k, k))
+            );
+            lcsAccordion.OnToggle(k, !(k in was.Key))
+        )
+      ExpandAll: |-
+        =Set(locTouched, true);
+        Set(locOpen, If(lcsAccordion.MultipleOpen, Concat(lcsAccordion.Items As s, s.Key, ","), First(lcsAccordion.Items).Key))
+      CollapseAll: |-
+        =Set(locTouched, true);
+        Set(locOpen, "")
+    Children:
+      - galSections:
+          Control: Gallery@2.15.0
+          Variant: VariableHeight
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Items: =lcsAccordion.Items
+            TemplatePadding: =0
+            ShowScrollbar: =true
+            AccessibleLabel: ="Sections"
+          Children:
+            - recRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), 56 + lblBody.Height + 16, 56) + 8
+                  Fill: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+            - shpTile:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =recRow.Height - 8
+                  Fill: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), If(lcsAccordion.Theme = "Dark", RGBA(41, 41, 41, 1), RGBA(255, 255, 255, 1)), If(lcsAccordion.Theme = "Dark", RGBA(46, 46, 48, 1), RGBA(247, 248, 251, 1)))
+                  BorderColor: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), If(lcsAccordion.Theme = "Dark", RGBA(71, 71, 74, 1), RGBA(223, 226, 232, 1)), RGBA(0, 0, 0, 0))
+                  BorderThickness: =1
+                  DropShadow: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), DropShadow.Light, DropShadow.None)
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+            - imgChevronBack:
+                Control: Image@2.2.3
+                Properties:
+                  X: =Parent.TemplateWidth - 44
+                  Y: =12
+                  Width: =32
+                  Height: =32
+                  Visible: =Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value))
+                  Image: |-
+                    =With(
+                        {fill: Mid(JSON(If(lcsAccordion.Theme = "Dark", ColorFade(lcsAccordion.AccentColor, -0.55), ColorFade(lcsAccordion.AccentColor, 0.85))), 2, 7)},
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><!-- " & ThisItem.Key & " --><style>.c{transform-box:fill-box;transform-origin:center;animation:lcsChevronPop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsChevronPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}@media (prefers-reduced-motion:reduce){.c{animation:none}}</style><circle class='" & If(lcsAccordion.Motion, "c", "") & "' cx='16' cy='16' r='16' fill='" & fill & "'/></svg>")
+                    )
+                  ImagePosition: =ImagePosition.Fit
+            - lblTitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =20
+                  Y: =0
+                  Width: =Parent.TemplateWidth - 76
+                  Height: =56
+                  Text: =ThisItem.Title
+                  Size: =16
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsAccordion.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - icoChevron:
+                Control: ModernIcon@1.1.0
+                Properties:
+                  X: =Parent.TemplateWidth - 38
+                  Y: =18
+                  Width: =20
+                  Height: =20
+                  Icon: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), "ChevronUp", "ChevronDown")
+                  IconColor: =If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), If(lcsAccordion.Theme = "Dark", ColorFade(lcsAccordion.AccentColor, 0.75), ColorFade(lcsAccordion.AccentColor, -0.5)), If(lcsAccordion.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)))
+                  IconStyle: =IconStyle.Outline
+            - btnHeader:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =56
+                  Text: =ThisItem.Title & If(Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value)), ", expanded", ", collapsed")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsAccordion.Theme = "Dark", RGBA(255, 255, 255, 0.06), RGBA(0, 0, 0, 0.04))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsAccordion.Theme = "Dark", RGBA(255, 255, 255, 0.12), RGBA(0, 0, 0, 0.08))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsAccordion.Theme = "Dark", ColorFade(lcsAccordion.AccentColor, 0.45), lcsAccordion.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+                  Tooltip: =ThisItem.Title
+                  OnSelect: =lcsAccordion.Toggle(ThisItem.Key)
+            - lblBody:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =20
+                  Y: =56
+                  Width: =Parent.TemplateWidth - 40
+                  AutoHeight: =true
+                  Visible: =Trim(ThisItem.Key) in ForAll(Split(If(locTouched, locOpen, lcsAccordion.DefaultOpenKeys), ","), Trim(ThisRecord.Value))
+                  Text: =ThisItem.Body
+                  Size: =lcsAccordion.BodySize
+                  Color: =If(lcsAccordion.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+                  Wrap: =true
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0

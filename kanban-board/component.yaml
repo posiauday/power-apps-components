@@ -1,0 +1,568 @@
+ComponentDefinitions:
+  lcsKanban:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks Kanban board: columns and cards from two tables, cards moved with buttons and the keyboard, work-in-progress limits that stop a full column taking more, and an OnMove event that tells your app what moved where."
+    CustomProperties:
+      Columns:
+        PropertyKind: Input
+        DisplayName: Columns
+        DataType: Table
+        Description: "The board's columns, left to right: Key, Title and Limit (the most cards the column may hold; 0 for no limit)."
+        Default: |-
+          =Table(
+              {Key: "todo", Title: "To do", Limit: 0},
+              {Key: "doing", Title: "In progress", Limit: 3},
+              {Key: "review", Title: "In review", Limit: 2},
+              {Key: "done", Title: "Done", Limit: 0}
+          )
+      Cards:
+        PropertyKind: Input
+        DisplayName: Cards
+        DataType: Table
+        Description: "Every card: Key, Column (the Key of its column), Title, Detail and Tag. Cards show in the order of this table."
+        Default: |-
+          =Table(
+              {Key: "c1", Column: "todo", Title: "Draft the onboarding email", Detail: "Due Friday", Tag: "Marketing"},
+              {Key: "c2", Column: "todo", Title: "Book the venue for the launch", Detail: "Two quotes in", Tag: "Events"},
+              {Key: "c3", Column: "doing", Title: "Build the approval flow", Detail: "Waiting on the finance list", Tag: "Automation"},
+              {Key: "c4", Column: "doing", Title: "Fix the gallery that stops at 500 rows", Detail: "Delegation warning on Filter", Tag: "Power Apps"},
+              {Key: "c5", Column: "review", Title: "Check the sales report totals", Detail: "Two regions differ", Tag: "Power BI"},
+              {Key: "c6", Column: "review", Title: "Read the security roles plan", Detail: "Comments by Tuesday", Tag: "Dataverse"},
+              {Key: "c7", Column: "done", Title: "Turn on the data policy", Detail: "Signed off", Tag: "Governance"}
+          )
+      CurrentKey:
+        PropertyKind: Input
+        DisplayName: CurrentKey
+        DataType: Text
+        Description: "The Key of the card to mark as selected, from your app. Leave it blank and the board marks the card last selected."
+        Default: =""
+      BlockWhenFull:
+        PropertyKind: Input
+        DisplayName: BlockWhenFull
+        DataType: Boolean
+        Description: "When true, a card can't be moved into a column that has reached its Limit: the button to move it there is turned off."
+        Default: =true
+      ShowDetail:
+        PropertyKind: Input
+        DisplayName: ShowDetail
+        DataType: Boolean
+        Description: "Shows each card's Detail line."
+        Default: =true
+      ShowTags:
+        PropertyKind: Input
+        DisplayName: ShowTags
+        DataType: Boolean
+        Description: "Shows each card's Tag above its title, in your colour."
+        Default: =true
+      CardHeight:
+        PropertyKind: Input
+        DisplayName: CardHeight
+        DataType: Number
+        Description: "The height of every card, in pixels. Make it taller for long titles."
+        Default: =96
+      BoardLabel:
+        PropertyKind: Input
+        DisplayName: BoardLabel
+        DataType: Text
+        Description: "What screen readers call the board."
+        Default: ="Board"
+      CardsText:
+        PropertyKind: Input
+        DisplayName: CardsText
+        DataType: Text
+        Description: "The word screen readers say after a column's count, such as In progress, 2 cards."
+        Default: ="cards"
+      OfText:
+        PropertyKind: Input
+        DisplayName: OfText
+        DataType: Text
+        Description: "The word between a column's count and its limit, such as 2 of 3."
+        Default: ="of"
+      FullText:
+        PropertyKind: Input
+        DisplayName: FullText
+        DataType: Text
+        Description: "What a column says when it has reached its limit."
+        Default: ="Full"
+      MoveText:
+        PropertyKind: Input
+        DisplayName: MoveText
+        DataType: Text
+        Description: "The start of a move button's name, read out and shown on hover, such as Move Fix login to Done."
+        Default: ="Move"
+      ToText:
+        PropertyKind: Input
+        DisplayName: ToText
+        DataType: Text
+        Description: "The word between the card and the column in a move button's name."
+        Default: ="to"
+      EmptyText:
+        PropertyKind: Input
+        DisplayName: EmptyText
+        DataType: Text
+        Description: "What an empty column says."
+        Default: ="No cards"
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for tags, the selected card and the focus ring."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "Plays short animations: a card that moves glows, a selected card's outline draws itself, a column that fills up pulses. They never play for people who've asked their device for reduced motion."
+        Default: =true
+      SelectedKey:
+        PropertyKind: Output
+        DisplayName: SelectedKey
+        DataType: Text
+        Description: "The Key of the selected card, or blank."
+      SelectedCard:
+        PropertyKind: Output
+        DisplayName: SelectedCard
+        DataType: Record
+        Description: "The selected card's row from Cards."
+      CardCount:
+        PropertyKind: Output
+        DisplayName: CardCount
+        DataType: Number
+        Description: "How many cards the board has."
+      FullColumns:
+        PropertyKind: Output
+        DisplayName: FullColumns
+        DataType: Text
+        Description: "Keys of the columns that have reached their limit, separated by commas."
+      OnMove:
+        PropertyKind: Event
+        DisplayName: OnMove
+        ReturnType: None
+        Description: "Runs when the user moves a card. Change the card's Column in your data here; the board shows it there when Cards changes."
+        Parameters:
+          - CardKey:
+              DataType: Text
+              Description: "The Key of the card."
+              Default: =""
+          - ToColumn:
+              DataType: Text
+              Description: "The Key of the column it moves to."
+              Default: =""
+          - FromColumn:
+              DataType: Text
+              Description: "The Key of the column it came from."
+              Default: =""
+        Default: =false
+      OnCardSelect:
+        PropertyKind: Event
+        DisplayName: OnCardSelect
+        ReturnType: None
+        Description: "Runs when the user selects a card. Open its details here."
+        Parameters:
+          - CardKey:
+              DataType: Text
+              Description: "The Key of the card."
+              Default: =""
+        Default: =false
+      ClearSelection:
+        PropertyKind: Action
+        DisplayName: ClearSelection
+        ReturnType: None
+        Description: "Unmarks the selected card, such as after you close its details."
+    Properties:
+      Width: =960
+      Height: =480
+      Fill: =RGBA(0, 0, 0, 0)
+      SelectedKey: =Coalesce(lcsKanban.CurrentKey, locSelected)
+      SelectedCard: =LookUp(lcsKanban.Cards, Key = Coalesce(lcsKanban.CurrentKey, locSelected))
+      CardCount: =CountRows(lcsKanban.Cards)
+      FullColumns: =Concat(Filter(lcsKanban.Columns As col, col.Limit > 0 && CountRows(Filter(lcsKanban.Cards, Column = col.Key)) >= col.Limit), Key, ",")
+      ClearSelection: =Set(locSelected, "")
+    Children:
+      - galColumns:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Items: |-
+              =ForAll(
+                  Sequence(CountRows(lcsKanban.Columns)) As i,
+                  With(
+                      {c: Last(FirstN(lcsKanban.Columns, i.Value))},
+                      {Key: c.Key, Title: c.Title, Limit: c.Limit, Pos: i.Value, Count: CountRows(Filter(lcsKanban.Cards, Column = c.Key))}
+                  )
+              )
+            WrapCount: =Max(1, CountRows(lcsKanban.Columns))
+            TemplateSize: =Max(1, Self.Height - 16)
+            TemplatePadding: =8
+            ShowScrollbar: =false
+            BorderStyle: =BorderStyle.None
+            AccessibleLabel: =lcsKanban.BoardLabel
+          Children:
+            - conColumn:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Fill: =If(lcsKanban.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(243, 244, 246, 1))
+                  BorderColor: =If(ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit, If(lcsKanban.Theme = "Dark", RGBA(251, 191, 36, 1), RGBA(217, 119, 6, 1)), RGBA(0, 0, 0, 0))
+                  BorderThickness: =If(ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit, 2, 0)
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+            - imgColumnPulse:
+                Control: Image@2.2.3
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Visible: =lcsKanban.Motion && ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit
+                  Image: |-
+                    =With(
+                        {c: If(lcsKanban.Theme = "Dark", "#fbbf24", "#d97706")},
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='" & Parent.TemplateWidth & "' height='" & Parent.TemplateHeight & "' viewBox='0 0 " & Parent.TemplateWidth & " " & Parent.TemplateHeight & "'><!--" & ThisItem.Key & ThisItem.Count & "--><style>.p{stroke-opacity:0;animation:p .9s ease-out 2}@keyframes p{0%{stroke-width:2;stroke-opacity:.9}100%{stroke-width:12;stroke-opacity:0}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><rect class='p' x='1' y='1' width='" & (Parent.TemplateWidth - 2) & "' height='" & (Parent.TemplateHeight - 2) & "' rx='10' fill='none' stroke='" & c & "' stroke-width='2'/></svg>")
+                    )
+            - lblColumnTitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =12
+                  Y: =10
+                  Width: =Max(0, Parent.TemplateWidth - 24 - 88)
+                  Height: =24
+                  Text: =ThisItem.Title
+                  Size: =14
+                  Color: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  FontWeight: =FontWeight.Semibold
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblColumnCount:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =Max(0, Parent.TemplateWidth - 12 - 88)
+                  Y: =10
+                  Width: =88
+                  Height: =24
+                  Text: =If(ThisItem.Limit > 0, ThisItem.Count & " " & lcsKanban.OfText & " " & ThisItem.Limit, Text(ThisItem.Count)) & If(ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit, " · " & lcsKanban.FullText, "")
+                  Size: =12
+                  Color: =If(ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit, If(lcsKanban.Theme = "Dark", RGBA(251, 191, 36, 1), RGBA(180, 83, 9, 1)), If(lcsKanban.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1)))
+                  FontWeight: =If(ThisItem.Limit > 0 && ThisItem.Count >= ThisItem.Limit, FontWeight.Semibold, FontWeight.Normal)
+                  Align: =Align.Right
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - imgColumnEmpty:
+                Control: Image@2.2.3
+                Properties:
+                  X: =(Parent.TemplateWidth - 48) / 2
+                  Y: =56
+                  Width: =48
+                  Height: =40
+                  Visible: =ThisItem.Count = 0
+                  Image: |-
+                    =With(
+                        {c: If(lcsKanban.Theme = "Dark", "#737373", "#a3a3a3")},
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='48' height='40' viewBox='0 0 48 40'>" & If(lcsKanban.Motion, "<style>.e{animation:e .6s ease-out both}@keyframes e{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.e{animation:none}}</style>", "") & "<g class='e' fill='none' stroke='" & c & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 22l6-14h24l6 14v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z'/><path d='M6 22h11l2 4h10l2-4h11'/></g></svg>")
+                    )
+            - lblColumnEmpty:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =12
+                  Y: =100
+                  Width: =Max(0, Parent.TemplateWidth - 24)
+                  Height: =24
+                  Visible: =ThisItem.Count = 0
+                  Text: =lcsKanban.EmptyText
+                  Size: =12
+                  Color: =If(lcsKanban.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - galCards:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  X: =6
+                  Y: =42
+                  Width: =Max(0, Parent.TemplateWidth - 12)
+                  Height: =Max(0, Parent.TemplateHeight - 48)
+                  Items: |-
+                    =With(
+                        {col: ThisItem, n: CountRows(lcsKanban.Columns)},
+                        With(
+                            {prev: If(col.Pos > 1, Last(FirstN(lcsKanban.Columns, col.Pos - 1))), next: If(col.Pos < n, Last(FirstN(lcsKanban.Columns, col.Pos + 1)))},
+                            With(
+                                {
+                                    prevFull: !IsBlank(prev.Key) && prev.Limit > 0 && CountRows(Filter(lcsKanban.Cards, Column = prev.Key)) >= prev.Limit,
+                                    nextFull: !IsBlank(next.Key) && next.Limit > 0 && CountRows(Filter(lcsKanban.Cards, Column = next.Key)) >= next.Limit
+                                },
+                                ForAll(
+                                    Filter(lcsKanban.Cards, Column = col.Key) As c,
+                                    {Key: c.Key, Column: c.Column, Title: c.Title, Detail: c.Detail, Tag: c.Tag, ColumnTitle: col.Title, PrevKey: Coalesce(prev.Key, ""), PrevTitle: Coalesce(prev.Title, ""), PrevFull: prevFull, NextKey: Coalesce(next.Key, ""), NextTitle: Coalesce(next.Title, ""), NextFull: nextFull}
+                                )
+                            )
+                        )
+                    )
+                  TemplateSize: =lcsKanban.CardHeight
+                  TemplatePadding: =4
+                  ShowScrollbar: =false
+                  BorderStyle: =BorderStyle.None
+                  AccessibleLabel: =ThisItem.Title & ", " & ThisItem.Count & " " & lcsKanban.CardsText
+                Children:
+                  - conCard:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Fill: =If(lcsKanban.Theme = "Dark", RGBA(48, 48, 48, 1), RGBA(255, 255, 255, 1))
+                        BorderColor: =If(ThisItem.Key = Coalesce(lcsKanban.CurrentKey, locSelected) && !lcsKanban.Motion, If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor), If(lcsKanban.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1)))
+                        BorderThickness: =If(ThisItem.Key = Coalesce(lcsKanban.CurrentKey, locSelected) && !lcsKanban.Motion, 2, 1)
+                        DropShadow: =DropShadow.None
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - imgCardGlow:
+                      Control: Image@2.2.3
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Visible: =lcsKanban.Motion && ThisItem.Key = locMoved
+                        Image: |-
+                          =With(
+                              {c: Mid(JSON(If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)), 2, 7)},
+                              "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='" & Parent.TemplateWidth & "' height='" & Parent.TemplateHeight & "' viewBox='0 0 " & Parent.TemplateWidth & " " & Parent.TemplateHeight & "'><!--" & locMoveStamp & "--><style>.g{animation:g 1.4s ease-out forwards}@keyframes g{0%{opacity:1}70%{opacity:.85}100%{opacity:0}}@media (prefers-reduced-motion:reduce){.g{animation-duration:1ms}}</style><rect class='g' x='1' y='1' width='" & (Parent.TemplateWidth - 2) & "' height='" & (Parent.TemplateHeight - 2) & "' rx='8' fill='" & c & "' fill-opacity='.12' stroke='" & c & "' stroke-width='2'/></svg>")
+                          )
+                  - imgCardOutline:
+                      Control: Image@2.2.3
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Visible: =lcsKanban.Motion && ThisItem.Key = Coalesce(lcsKanban.CurrentKey, locSelected)
+                        Image: |-
+                          =With(
+                              {c: Mid(JSON(If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)), 2, 7)},
+                              "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='" & Parent.TemplateWidth & "' height='" & Parent.TemplateHeight & "' viewBox='0 0 " & Parent.TemplateWidth & " " & Parent.TemplateHeight & "'><!--" & locSelStamp & "--><style>.s{stroke-dasharray:100;stroke-dashoffset:100;animation:s .55s ease-out forwards}@keyframes s{to{stroke-dashoffset:0}}@media (prefers-reduced-motion:reduce){.s{animation-duration:1ms}}</style><rect class='s' x='1' y='1' width='" & (Parent.TemplateWidth - 2) & "' height='" & (Parent.TemplateHeight - 2) & "' rx='8' pathLength='100' fill='none' stroke='" & c & "' stroke-width='2'/></svg>")
+                          )
+                  - lblCardTag:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        X: =12
+                        Y: =8
+                        Width: =Max(0, Parent.TemplateWidth - 24)
+                        Height: =16
+                        Visible: =lcsKanban.ShowTags && !IsBlank(ThisItem.Tag)
+                        Text: =ThisItem.Tag
+                        Size: =11
+                        Color: =If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)
+                        FontWeight: =FontWeight.Semibold
+                        VerticalAlign: =VerticalAlign.Middle
+                        Wrap: =false
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                  - lblCardTitle:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        X: =12
+                        Y: =If(lcsKanban.ShowTags && !IsBlank(ThisItem.Tag), 26, 10)
+                        Width: =Max(0, Parent.TemplateWidth - 24)
+                        Height: =Max(0, Parent.TemplateHeight - If(lcsKanban.ShowTags && !IsBlank(ThisItem.Tag), 26, 10) - 34)
+                        Text: =ThisItem.Title
+                        Size: =13
+                        Color: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                        FontWeight: =FontWeight.Semibold
+                        VerticalAlign: =VerticalAlign.Top
+                        Wrap: =true
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                  - lblCardDetail:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        X: =12
+                        Y: =Parent.TemplateHeight - 30
+                        Width: =Max(0, Parent.TemplateWidth - 24 - 64)
+                        Height: =22
+                        Visible: =lcsKanban.ShowDetail
+                        Text: =ThisItem.Detail
+                        Size: =12
+                        Color: =If(lcsKanban.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                        VerticalAlign: =VerticalAlign.Middle
+                        Wrap: =false
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                  - btnCard:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Max(0, Parent.TemplateHeight - 36)
+                        Text: =ThisItem.Title & If(IsBlank(ThisItem.Tag), "", ", " & ThisItem.Tag) & If(IsBlank(ThisItem.Detail), "", ", " & ThisItem.Detail) & ", " & ThisItem.ColumnTitle
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 0, 0, 0)
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        HoverFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.05), RGBA(0, 0, 0, 0.03))
+                        HoverColor: =RGBA(0, 0, 0, 0)
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.06))
+                        PressedColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(0, 0, 0, 0)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        FocusedBorderColor: =If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)
+                        FocusedBorderThickness: =2
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        OnSelect: |-
+                          =Set(locSelected, ThisItem.Key);
+                          Set(locSelStamp, Text(Rand()));
+                          lcsKanban.OnCardSelect(ThisItem.Key)
+                  - icoMoveBack:
+                      Control: ModernIcon@1.1.0
+                      Properties:
+                        X: =Parent.TemplateWidth - 62
+                        Y: =Parent.TemplateHeight - 30
+                        Width: =20
+                        Height: =20
+                        Visible: =!IsBlank(ThisItem.PrevKey)
+                        Icon: ="ChevronLeft"
+                        IconColor: =If(lcsKanban.BlockWhenFull && ThisItem.PrevFull, If(lcsKanban.Theme = "Dark", RGBA(90, 90, 90, 1), RGBA(189, 189, 189, 1)), If(lcsKanban.Theme = "Dark", RGBA(214, 214, 214, 1), RGBA(66, 66, 66, 1)))
+                        IconStyle: =IconStyle.Outline
+                  - btnMoveBack:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        X: =Parent.TemplateWidth - 66
+                        Y: =Parent.TemplateHeight - 34
+                        Width: =28
+                        Height: =28
+                        Visible: =!IsBlank(ThisItem.PrevKey)
+                        DisplayMode: =If(lcsKanban.BlockWhenFull && ThisItem.PrevFull, DisplayMode.Disabled, DisplayMode.Edit)
+                        Text: =lcsKanban.MoveText & " " & ThisItem.Title & " " & lcsKanban.ToText & " " & ThisItem.PrevTitle & If(lcsKanban.BlockWhenFull && ThisItem.PrevFull, ", " & lcsKanban.FullText, "")
+                        Tooltip: =lcsKanban.MoveText & " " & lcsKanban.ToText & " " & ThisItem.PrevTitle & If(lcsKanban.BlockWhenFull && ThisItem.PrevFull, " (" & lcsKanban.FullText & ")", "")
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 0, 0, 0)
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        HoverFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                        HoverColor: =RGBA(0, 0, 0, 0)
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                        PressedColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(0, 0, 0, 0)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        FocusedBorderColor: =If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)
+                        FocusedBorderThickness: =2
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        OnSelect: |-
+                          =Set(locSelected, ThisItem.Key);
+                          Set(locMoved, ThisItem.Key);
+                          Set(locMoveStamp, Text(Rand()));
+                          lcsKanban.OnMove(ThisItem.Key, ThisItem.PrevKey, ThisItem.Column)
+                  - icoMoveNext:
+                      Control: ModernIcon@1.1.0
+                      Properties:
+                        X: =Parent.TemplateWidth - 32
+                        Y: =Parent.TemplateHeight - 30
+                        Width: =20
+                        Height: =20
+                        Visible: =!IsBlank(ThisItem.NextKey)
+                        Icon: ="ChevronRight"
+                        IconColor: =If(lcsKanban.BlockWhenFull && ThisItem.NextFull, If(lcsKanban.Theme = "Dark", RGBA(90, 90, 90, 1), RGBA(189, 189, 189, 1)), If(lcsKanban.Theme = "Dark", RGBA(214, 214, 214, 1), RGBA(66, 66, 66, 1)))
+                        IconStyle: =IconStyle.Outline
+                  - btnMoveNext:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        X: =Parent.TemplateWidth - 36
+                        Y: =Parent.TemplateHeight - 34
+                        Width: =28
+                        Height: =28
+                        Visible: =!IsBlank(ThisItem.NextKey)
+                        DisplayMode: =If(lcsKanban.BlockWhenFull && ThisItem.NextFull, DisplayMode.Disabled, DisplayMode.Edit)
+                        Text: =lcsKanban.MoveText & " " & ThisItem.Title & " " & lcsKanban.ToText & " " & ThisItem.NextTitle & If(lcsKanban.BlockWhenFull && ThisItem.NextFull, ", " & lcsKanban.FullText, "")
+                        Tooltip: =lcsKanban.MoveText & " " & lcsKanban.ToText & " " & ThisItem.NextTitle & If(lcsKanban.BlockWhenFull && ThisItem.NextFull, " (" & lcsKanban.FullText & ")", "")
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 0, 0, 0)
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        HoverFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                        HoverColor: =RGBA(0, 0, 0, 0)
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedFill: =If(lcsKanban.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                        PressedColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(0, 0, 0, 0)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        FocusedBorderColor: =If(lcsKanban.Theme = "Dark", ColorFade(lcsKanban.AccentColor, 0.45), lcsKanban.AccentColor)
+                        FocusedBorderThickness: =2
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        OnSelect: |-
+                          =Set(locSelected, ThisItem.Key);
+                          Set(locMoved, ThisItem.Key);
+                          Set(locMoveStamp, Text(Rand()));
+                          lcsKanban.OnMove(ThisItem.Key, ThisItem.NextKey, ThisItem.Column)
+      - lblBoardEmpty:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =0
+            Y: =24
+            Width: =Parent.Width
+            Height: =24
+            Visible: =CountRows(lcsKanban.Columns) = 0
+            Text: =lcsKanban.EmptyText
+            Size: =13
+            Color: =If(lcsKanban.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0

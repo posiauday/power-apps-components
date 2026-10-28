@@ -1,0 +1,601 @@
+ComponentDefinitions:
+  lcsMonthCalendar:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks month calendar: a month grid from the first of the month and your start of week, events from a table drawn as pills that run across the days they span, +N more past a limit, today marked, a day or an event selectable with OnSelectDay and OnSelectEvent, previous, next and Today, light and dark, and the pills drawing in when the month changes."
+    CustomProperties:
+      Events:
+        PropertyKind: Input
+        DisplayName: Events
+        DataType: Table
+        Description: "The events, as a table with Key, Title, Start (a date), End (a date, the same as Start for one day) and Color (a hex, or empty for your accent) columns."
+        Default: |-
+          =Table({Key: "e1", Title: "Fire drill", Start: Today(), End: Today(), Color: "#c50f1f"}, {Key: "e2", Title: "Site survey", Start: DateAdd(Today(), 1, TimeUnit.Days), End: DateAdd(Today(), 1, TimeUnit.Days), Color: ""}, {Key: "e3", Title: "Projector install", Start: DateAdd(Today(), 3, TimeUnit.Days), End: DateAdd(Today(), 5, TimeUnit.Days), Color: "#7c3aed"}, {Key: "e4", Title: "Board visit", Start: DateAdd(Today(), -2, TimeUnit.Days), End: DateAdd(Today(), -2, TimeUnit.Days), Color: "#107c10"}, {Key: "e5", Title: "Floor closed", Start: DateAdd(Today(), 8, TimeUnit.Days), End: DateAdd(Today(), 9, TimeUnit.Days), Color: "#c19c00"}, {Key: "e6", Title: "Audit", Start: DateAdd(Today(), 1, TimeUnit.Days), End: DateAdd(Today(), 1, TimeUnit.Days), Color: "#0e7490"}, {Key: "e7", Title: "Deliveries", Start: DateAdd(Today(), 1, TimeUnit.Days), End: DateAdd(Today(), 1, TimeUnit.Days), Color: ""}, {Key: "e8", Title: "Training", Start: DateAdd(Today(), 1, TimeUnit.Days), End: DateAdd(Today(), 1, TimeUnit.Days), Color: "#be185d"})
+      DefaultMonth:
+        PropertyKind: Input
+        DisplayName: DefaultMonth
+        DataType: DateAndTime
+        Description: "Any date in the month to show first. The person moves months from there; GoToMonth moves them from your app."
+        Default: =Today()
+      StartOfWeek:
+        PropertyKind: Input
+        DisplayName: StartOfWeek
+        DataType: Text
+        Description: "Monday or Sunday, the first column."
+        Default: ="Monday"
+      MaxPerDay:
+        PropertyKind: Input
+        DisplayName: MaxPerDay
+        DataType: Number
+        Description: "How many event pills a day shows before +N more."
+        Default: =3
+      CellHeight:
+        PropertyKind: Input
+        DisplayName: CellHeight
+        DataType: Number
+        Description: "Each day's height. 88 fits three pills; add 20 for each more."
+        Default: =88
+      ShowToday:
+        PropertyKind: Input
+        DisplayName: ShowToday
+        DataType: Boolean
+        Description: "Shows the Today button in the header."
+        Default: =true
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for today's mark, the selected day, events without a colour and the focus rings."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "The event pills draw in from the left when the month changes, and the selected day's ring pops in. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      VisibleMonth:
+        PropertyKind: Output
+        DisplayName: VisibleMonth
+        DataType: DateAndTime
+        Description: "The first day of the month on show."
+      SelectedDate:
+        PropertyKind: Output
+        DisplayName: SelectedDate
+        DataType: DateAndTime
+        Description: "The selected day; blank when none."
+      EventsInMonth:
+        PropertyKind: Output
+        DisplayName: EventsInMonth
+        DataType: Number
+        Description: "How many events touch the month on show."
+      OnSelectDay:
+        PropertyKind: Event
+        DisplayName: OnSelectDay
+        ReturnType: None
+        Description: "Runs in your app when a day is selected, with its date. Open a new-event form here."
+        Parameters:
+          - SelectedDate:
+              DataType: DateAndTime
+              Description: "The day selected."
+              Default: =Today()
+        Default: =false
+      OnSelectEvent:
+        PropertyKind: Event
+        DisplayName: OnSelectEvent
+        ReturnType: None
+        Description: "Runs in your app when an event pill is selected, with its key, title and start."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The event's Key."
+              Default: =""
+          - Title:
+              DataType: Text
+              Description: "The event's Title."
+              Default: =""
+          - Start:
+              DataType: DateAndTime
+              Description: "The event's Start."
+              Default: =Today()
+        Default: =false
+      OnMonthChange:
+        PropertyKind: Event
+        DisplayName: OnMonthChange
+        ReturnType: None
+        Description: "Runs in your app when the month on show changes, with its first day. Load that month's events here."
+        Parameters:
+          - Month:
+              DataType: DateAndTime
+              Description: "The first day of the month now on show."
+              Default: =Today()
+        Default: =false
+      Next:
+        PropertyKind: Action
+        DisplayName: Next
+        ReturnType: None
+        Description: "Shows the next month."
+      Previous:
+        PropertyKind: Action
+        DisplayName: Previous
+        ReturnType: None
+        Description: "Shows the month before."
+      GoToToday:
+        PropertyKind: Action
+        DisplayName: GoToToday
+        ReturnType: None
+        Description: "Shows this month and selects today."
+      GoToMonth:
+        PropertyKind: Action
+        DisplayName: GoToMonth
+        ReturnType: None
+        Description: "Shows the month of a date."
+        Parameters:
+          - Month:
+              DataType: DateAndTime
+              Description: "Any date in the month to show."
+              Default: =Today()
+      Select:
+        PropertyKind: Action
+        DisplayName: Select
+        ReturnType: None
+        Description: "Selects a day from your app, moving to its month if needed, without raising OnSelectDay."
+        Parameters:
+          - SelectedDate:
+              DataType: DateAndTime
+              Description: "The day to select."
+              Default: =Today()
+    Properties:
+      Width: =700
+      Height: =44 + 24 + 6 * lcsMonthCalendar.CellHeight
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: |-
+        =Set(locMonth, Date(Year(lcsMonthCalendar.DefaultMonth), Month(lcsMonthCalendar.DefaultMonth), 1));
+        Set(locSelected, Blank());
+        Set(locMoves, 0)
+      VisibleMonth: =Coalesce(locMonth, Date(Year(lcsMonthCalendar.DefaultMonth), Month(lcsMonthCalendar.DefaultMonth), 1))
+      SelectedDate: =locSelected
+      EventsInMonth: |-
+        =With(
+            {first: lcsMonthCalendar.VisibleMonth},
+            With(
+                {last: DateAdd(DateAdd(first, 1, TimeUnit.Months), -1, TimeUnit.Days)},
+                CountRows(Filter(lcsMonthCalendar.Events As ev, Date(Year(ev.Start), Month(ev.Start), Day(ev.Start)) <= last && Date(Year(ev.End), Month(ev.End), Day(ev.End)) >= first))
+            )
+        )
+      Next: |-
+        =Set(locMonth, DateAdd(lcsMonthCalendar.VisibleMonth, 1, TimeUnit.Months));
+        Set(locMoves, locMoves + 1);
+        lcsMonthCalendar.OnMonthChange(locMonth)
+      Previous: |-
+        =Set(locMonth, DateAdd(lcsMonthCalendar.VisibleMonth, -1, TimeUnit.Months));
+        Set(locMoves, locMoves + 1);
+        lcsMonthCalendar.OnMonthChange(locMonth)
+      GoToToday: |-
+        =If(
+            lcsMonthCalendar.VisibleMonth <> Date(Year(Today()), Month(Today()), 1),
+            Set(locMonth, Date(Year(Today()), Month(Today()), 1));
+            Set(locMoves, locMoves + 1);
+            lcsMonthCalendar.OnMonthChange(locMonth)
+        );
+        Set(locSelected, Today())
+      GoToMonth: |-
+        =If(
+            lcsMonthCalendar.VisibleMonth <> Date(Year(Month), Month(Month), 1),
+            Set(locMonth, Date(Year(Month), Month(Month), 1));
+            Set(locMoves, locMoves + 1);
+            lcsMonthCalendar.OnMonthChange(locMonth)
+        )
+      Select: |-
+        =If(
+            lcsMonthCalendar.VisibleMonth <> Date(Year(SelectedDate), Month(SelectedDate), 1),
+            Set(locMonth, Date(Year(SelectedDate), Month(SelectedDate), 1));
+            Set(locMoves, locMoves + 1);
+            lcsMonthCalendar.OnMonthChange(locMonth)
+        );
+        Set(locSelected, Date(Year(SelectedDate), Month(SelectedDate), Day(SelectedDate)))
+    Children:
+      - lblMonth:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width - 200
+            Height: =44
+            Text: =Text(lcsMonthCalendar.VisibleMonth, "mmmm yyyy")
+            Size: =22
+            FontWeight: =FontWeight.Normal
+            Color: =If(lcsMonthCalendar.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblToday:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =Parent.Width - 172
+            Y: =4
+            Width: =76
+            Height: =36
+            Visible: =lcsMonthCalendar.ShowToday
+            Text: ="Today"
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.75), ColorFade(lcsMonthCalendar.AccentColor, -0.5))
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            Fill: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, -0.55), ColorFade(lcsMonthCalendar.AccentColor, 0.85))
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+      - btnToday:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 172
+            Y: =4
+            Width: =76
+            Height: =36
+            Visible: =lcsMonthCalendar.ShowToday
+            Text: ="Go to today"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            HoverFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.45), lcsMonthCalendar.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            Tooltip: ="Today"
+            OnSelect: =lcsMonthCalendar.GoToToday()
+      - imgPrevious:
+          Control: Image@2.2.3
+          Properties:
+            X: =Parent.Width - 88
+            Y: =6
+            Width: =32
+            Height: =32
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M19 10l-6 6 6 6' fill='none' stroke='" & If(lcsMonthCalendar.Theme = "Dark", "#ffffff", "#242424") & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - btnPrevious:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 88
+            Y: =6
+            Width: =32
+            Height: =32
+            Text: ="Previous month"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.45), lcsMonthCalendar.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            Tooltip: ="Previous month"
+            OnSelect: =lcsMonthCalendar.Previous()
+      - imgNext:
+          Control: Image@2.2.3
+          Properties:
+            X: =Parent.Width - 44
+            Y: =6
+            Width: =32
+            Height: =32
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M13 10l6 6-6 6' fill='none' stroke='" & If(lcsMonthCalendar.Theme = "Dark", "#ffffff", "#242424") & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - btnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 44
+            Y: =6
+            Width: =32
+            Height: =32
+            Text: ="Next month"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.45), lcsMonthCalendar.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            Tooltip: ="Next month"
+            OnSelect: =lcsMonthCalendar.Next()
+      - galWeekdays:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =44
+            Width: =Parent.Width
+            Height: =24
+            Items: |-
+              =ForAll(Sequence(7) As s, {Name: Index(Calendar.WeekdaysShort(), Mod(s.Value - 1 + If(lcsMonthCalendar.StartOfWeek = "Monday", 1, 0), 7) + 1).Value})
+            TemplateSize: =24
+            TemplatePadding: =0
+            WrapCount: =7
+            ShowScrollbar: =false
+            AccessibleLabel: ="Days of the week"
+          Children:
+            - lblWeekday:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =24
+                  Text: =ThisItem.Name
+                  Size: =11
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsMonthCalendar.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+      - galDays:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =68
+            Width: =Parent.Width
+            Height: =6 * lcsMonthCalendar.CellHeight
+            Items: |-
+              =With(
+                  {first: lcsMonthCalendar.VisibleMonth},
+                  With(
+                      {offset: Weekday(first, If(lcsMonthCalendar.StartOfWeek = "Monday", StartOfWeek.Monday, StartOfWeek.Sunday)) - 1},
+                      ForAll(
+                          Sequence(42) As s,
+                          With(
+                              {d: DateAdd(first, s.Value - 1 - offset, TimeUnit.Days)},
+                              {
+                                  Pos: s.Value,
+                                  CellDate: d,
+                                  DayNum: Day(d),
+                                  InMonth: Month(d) = Month(first) && Year(d) = Year(first),
+                                  IsToday: d = Today(),
+                                  EventCount: CountRows(Filter(lcsMonthCalendar.Events As ev, d >= Date(Year(ev.Start), Month(ev.Start), Day(ev.Start)) && d <= Date(Year(ev.End), Month(ev.End), Day(ev.End))))
+                              }
+                          )
+                      )
+                  )
+              )
+            TemplateSize: =lcsMonthCalendar.CellHeight
+            TemplatePadding: =0
+            WrapCount: =7
+            ShowScrollbar: =false
+            AccessibleLabel: =Text(lcsMonthCalendar.VisibleMonth, "mmmm yyyy")
+          Children:
+            - shpCell:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Fill: =If(!IsBlank(locSelected) && ThisItem.CellDate = locSelected, If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.08), ColorFade(lcsMonthCalendar.AccentColor, 0.9)), ThisItem.InMonth, If(lcsMonthCalendar.Theme = "Dark", RGBA(41, 41, 41, 1), RGBA(255, 255, 255, 1)), If(lcsMonthCalendar.Theme = "Dark", RGBA(46, 46, 48, 1), RGBA(247, 248, 251, 1)))
+                  BorderColor: =If(lcsMonthCalendar.Theme = "Dark", RGBA(71, 71, 74, 1), RGBA(223, 226, 232, 1))
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =If(ThisItem.Pos = 1, 20, 0)
+                  RadiusTopRight: =If(ThisItem.Pos = 7, 20, 0)
+                  RadiusBottomLeft: =If(ThisItem.Pos = 36, 20, 0)
+                  RadiusBottomRight: =If(ThisItem.Pos = 42, 20, 0)
+            - imgSelected:
+                Control: Image@2.2.3
+                Properties:
+                  X: =4
+                  Y: =2
+                  Width: =24
+                  Height: =24
+                  Visible: =!IsBlank(locSelected) && ThisItem.CellDate = locSelected
+                  Image: |-
+                    =With(
+                        {accent: Mid(JSON(lcsMonthCalendar.AccentColor), 2, 7)},
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><!-- " & Text(ThisItem.CellDate, "yyyy-mm-dd") & " --><style>.p{transform-box:fill-box;transform-origin:center;animation:lcsRingPop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsRingPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><circle class='" & If(lcsMonthCalendar.Motion, "p", "") & "' cx='12' cy='12' r='10.5' fill='none' stroke='" & accent & "' stroke-width='2'/></svg>")
+                    )
+                  ImagePosition: =ImagePosition.Fit
+            - shpToday:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =4
+                  Y: =2
+                  Width: =24
+                  Height: =24
+                  Visible: =ThisItem.IsToday
+                  Fill: =lcsMonthCalendar.AccentColor
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+            - lblDay:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =4
+                  Y: =2
+                  Width: =24
+                  Height: =24
+                  Text: =ThisItem.DayNum
+                  Size: =12
+                  FontWeight: =If(ThisItem.IsToday, FontWeight.Semibold, FontWeight.Normal)
+                  Color: =If(ThisItem.IsToday, RGBA(255, 255, 255, 1), ThisItem.InMonth, If(lcsMonthCalendar.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1)), If(lcsMonthCalendar.Theme = "Dark", RGBA(110, 110, 110, 1), RGBA(160, 160, 160, 1)))
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblMore:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =32
+                  Y: =2
+                  Width: =Parent.TemplateWidth - 36
+                  Height: =24
+                  Align: =Align.Right
+                  Visible: =ThisItem.EventCount > lcsMonthCalendar.MaxPerDay
+                  Text: ="+" & (ThisItem.EventCount - lcsMonthCalendar.MaxPerDay) & " more"
+                  Size: =10
+                  Color: =If(lcsMonthCalendar.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - btnDay:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Text: =Text(ThisItem.CellDate, "dddd d mmmm") & If(ThisItem.IsToday, ", today", "") & If(ThisItem.EventCount > 0, ", " & ThisItem.EventCount & If(ThisItem.EventCount = 1, " event", " events"), "") & If(!IsBlank(locSelected) && ThisItem.CellDate = locSelected, ", selected", "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.05), RGBA(0, 0, 0, 0.03))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.06))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.45), lcsMonthCalendar.AccentColor)
+                  FocusedBorderThickness: =2
+                  Tooltip: =Text(ThisItem.CellDate, "d mmmm yyyy")
+                  OnSelect: |-
+                    =Set(locSelected, ThisItem.CellDate);
+                    lcsMonthCalendar.OnSelectDay(ThisItem.CellDate)
+            - galEvents:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  X: =0
+                  Y: =28
+                  Width: =Parent.TemplateWidth
+                  Height: =20 * lcsMonthCalendar.MaxPerDay
+                  Items: |-
+                    =With(
+                        {d: ThisItem.CellDate, col: Mod(ThisItem.Pos - 1, 7) + 1},
+                        FirstN(
+                            ForAll(
+                                Filter(lcsMonthCalendar.Events As ev, d >= Date(Year(ev.Start), Month(ev.Start), Day(ev.Start)) && d <= Date(Year(ev.End), Month(ev.End), Day(ev.End))) As ev,
+                                {
+                                    Key: ev.Key,
+                                    Title: ev.Title,
+                                    Start: ev.Start,
+                                    End: ev.End,
+                                    Color: Coalesce(ev.Color, Mid(JSON(lcsMonthCalendar.AccentColor), 2, 7)),
+                                    IsStart: d = Date(Year(ev.Start), Month(ev.Start), Day(ev.Start)),
+                                    IsEnd: d = Date(Year(ev.End), Month(ev.End), Day(ev.End)),
+                                    ShowTitle: d = Date(Year(ev.Start), Month(ev.Start), Day(ev.Start)) || col = 1
+                                }
+                            ),
+                            lcsMonthCalendar.MaxPerDay
+                        )
+                    )
+                  TemplateSize: =20
+                  TemplatePadding: =0
+                  ShowScrollbar: =false
+                  AccessibleLabel: ="Events"
+                Children:
+                  - imgPill:
+                      Control: Image@2.2.3
+                      Properties:
+                        X: =If(ThisItem.IsStart, 3, 0)
+                        Y: =1
+                        Width: =Parent.TemplateWidth - If(ThisItem.IsStart, 3, 0) - If(ThisItem.IsEnd, 3, 0)
+                        Height: =18
+                        Image: |-
+                          =With(
+                              {
+                                  l: If(ThisItem.IsStart, 6, 0),
+                                  r: If(ThisItem.IsEnd, 6, 0),
+                                  tone: Mid(JSON(ColorFade(ColorValue(ThisItem.Color), If(lcsMonthCalendar.Theme = "Dark", -0.5, 0.8))), 2, 7)
+                              },
+                              "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 18' preserveAspectRatio='none'><!-- " & ThisItem.Key & locMoves & " --><style>.d{transform-origin:left;animation:lcsPillIn .35s ease-out both}@keyframes lcsPillIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style><g class='" & If(lcsMonthCalendar.Motion, "d", "") & "'><path d='M" & l & ",0 H" & (100 - r) & " a" & r & "," & r & " 0 0 1 " & r & "," & r & " v" & (18 - 2 * r) & " a" & r & "," & r & " 0 0 1 -" & r & "," & r & " H" & l & " a" & l & "," & l & " 0 0 1 -" & l & ",-" & l & " v-" & (18 - 2 * l) & " a" & l & "," & l & " 0 0 1 " & l & ",-" & l & " z' fill='" & tone & "'/>" & If(ThisItem.IsStart, "<rect x='0' y='0' width='3' height='18' fill='" & ThisItem.Color & "'/>", "") & "</g></svg>")
+                          )
+                        ImagePosition: =ImagePosition.Stretch
+                  - lblPill:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        X: =If(ThisItem.IsStart, 9, 4)
+                        Y: =1
+                        Width: =Parent.TemplateWidth - 12
+                        Height: =18
+                        Visible: =ThisItem.ShowTitle
+                        Text: =ThisItem.Title
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorFade(ColorValue(ThisItem.Color), If(lcsMonthCalendar.Theme = "Dark", 0.6, -0.45))
+                        VerticalAlign: =VerticalAlign.Middle
+                        Wrap: =false
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                  - btnPill:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        X: =0
+                        Y: =1
+                        Width: =Parent.TemplateWidth
+                        Height: =18
+                        Text: =ThisItem.Title & ", " & Text(ThisItem.Start, "d mmm") & If(ThisItem.IsStart && ThisItem.IsEnd, "", " to " & Text(ThisItem.End, "d mmm"))
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 0, 0, 0)
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        HoverFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                        HoverColor: =RGBA(0, 0, 0, 0)
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedFill: =If(lcsMonthCalendar.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                        PressedColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        FocusedBorderColor: =If(lcsMonthCalendar.Theme = "Dark", ColorFade(lcsMonthCalendar.AccentColor, 0.45), lcsMonthCalendar.AccentColor)
+                        FocusedBorderThickness: =2
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        Tooltip: =ThisItem.Title
+                        OnSelect: =lcsMonthCalendar.OnSelectEvent(ThisItem.Key, ThisItem.Title, ThisItem.Start)

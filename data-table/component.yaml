@@ -1,0 +1,2569 @@
+ComponentDefinitions:
+  lcsDataTable:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks data table: table, card and list views of your rows, a row you select to open, coloured pills, segmented progress, sortable headers that tell your app, checkboxes with bulk actions, a row menu, and loading and empty states."
+    CustomProperties:
+      Columns:
+        PropertyKind: Input
+        DisplayName: Columns
+        DataType: Table
+        Description: "The columns, in order, up to six: Label, Width in pixels, and Kind: Text, Strong (bold), Badge (a coloured pill) or Progress (a segmented bar from text such as 2/4). Column 1 shows C1 from Rows, and so on."
+        Default: |-
+          =Table(
+              {Label: "Order", Width: 110, Kind: "Strong"},
+              {Label: "Customer", Width: 200, Kind: "Text"},
+              {Label: "Status", Width: 140, Kind: "Badge"},
+              {Label: "Progress", Width: 190, Kind: "Progress"},
+              {Label: "Due", Width: 110, Kind: "Text"},
+              {Label: "Priority", Width: 110, Kind: "Badge"}
+          )
+      Rows:
+        PropertyKind: Input
+        DisplayName: Rows
+        DataType: Table
+        Description: "The rows: Id, and the text for each column in C1 to C6. Sort, filter and page them in your app."
+        Default: |-
+          =Table(
+              {Id: "1001", C1: "#1001", C2: "Avery Brooks", C3: "In progress", C4: "2/4", C5: "Mar 3", C6: "High"},
+              {Id: "1002", C1: "#1002", C2: "Jordan Lee", C3: "Completed", C4: "5/5", C5: "Mar 5", C6: "Medium"},
+              {Id: "1003", C1: "#1003", C2: "Priya Nair", C3: "On hold", C4: "1/3", C5: "Mar 9", C6: "Low"},
+              {Id: "1004", C1: "#1004", C2: "Mateo Alvarez", C3: "Not started", C4: "0/4", C5: "Mar 12", C6: "High"}
+          )
+      BadgeStyles:
+        PropertyKind: Input
+        DisplayName: BadgeStyles
+        DataType: Table
+        Description: "The colours of Badge pills by their text: Value, Fill and Ink. Text with no style is grey."
+        Default: |-
+          =Table(
+              {Value: "In progress", Fill: RGBA(219, 234, 254, 1), Ink: RGBA(30, 64, 175, 1)},
+              {Value: "Completed", Fill: RGBA(220, 252, 231, 1), Ink: RGBA(22, 101, 52, 1)},
+              {Value: "On hold", Fill: RGBA(254, 243, 199, 1), Ink: RGBA(146, 64, 14, 1)},
+              {Value: "Not started", Fill: RGBA(243, 244, 246, 1), Ink: RGBA(75, 85, 99, 1)},
+              {Value: "High", Fill: RGBA(254, 226, 226, 1), Ink: RGBA(153, 27, 27, 1)},
+              {Value: "Medium", Fill: RGBA(254, 243, 199, 1), Ink: RGBA(146, 64, 14, 1)},
+              {Value: "Low", Fill: RGBA(220, 252, 231, 1), Ink: RGBA(22, 101, 52, 1)}
+          )
+      View:
+        PropertyKind: Input
+        DisplayName: View
+        DataType: Text
+        Description: "The view to start with: Table, Cards or List."
+        Default: ="Table"
+      ShowViewToggle:
+        PropertyKind: Input
+        DisplayName: ShowViewToggle
+        DataType: Boolean
+        Description: "Shows the Table, Cards and List switch."
+        Default: =true
+      TitleColumn:
+        PropertyKind: Input
+        DisplayName: TitleColumn
+        DataType: Number
+        Description: "The column that names a row: the title of a card or list item, and the name screen readers hear."
+        Default: =2
+      SubtitleColumn:
+        PropertyKind: Input
+        DisplayName: SubtitleColumn
+        DataType: Number
+        Description: "The column shown small above a card's title and under a list item's."
+        Default: =1
+      Sortable:
+        PropertyKind: Input
+        DisplayName: Sortable
+        DataType: Boolean
+        Description: "Column headers can be selected to sort. The table runs OnSort; your app sorts Rows."
+        Default: =true
+      Selectable:
+        PropertyKind: Input
+        DisplayName: Selectable
+        DataType: Boolean
+        Description: "Shows a checkbox on each row, and one to select them all in table view."
+        Default: =true
+      BulkActions:
+        PropertyKind: Input
+        DisplayName: BulkActions
+        DataType: Text
+        Description: "Buttons for the selected rows, separated by commas, such as Approve,Reject. Up to three. Leave empty for none."
+        Default: =""
+      RowActions:
+        PropertyKind: Input
+        DisplayName: RowActions
+        DataType: Text
+        Description: "The row menu, separated by commas, such as View,Edit,Delete. Up to three. Leave empty for no menu."
+        Default: ="View,Edit,Delete"
+      Density:
+        PropertyKind: Input
+        DisplayName: Density
+        DataType: Text
+        Description: "Comfortable (60 tall rows, easy to touch) or Compact (44)."
+        Default: ="Comfortable"
+      Loading:
+        PropertyKind: Input
+        DisplayName: Loading
+        DataType: Boolean
+        Description: "Shows grey placeholder rows while your app loads the data."
+        Default: =false
+      EmptyTitle:
+        PropertyKind: Input
+        DisplayName: EmptyTitle
+        DataType: Text
+        Description: "The heading when there are no rows."
+        Default: ="No items found"
+      EmptyText:
+        PropertyKind: Input
+        DisplayName: EmptyText
+        DataType: Text
+        Description: "The line under it."
+        Default: ="Try changing your search or filters."
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for progress, checkboxes and the selected rows."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "Plays short animations: progress segments fill in one after another, a highlight sweeps once across the loading rows, and the empty state's icon pops in. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      CurrentView:
+        PropertyKind: Output
+        DisplayName: CurrentView
+        DataType: Text
+        Description: "The view shown now: Table, Cards or List."
+      SortColumn:
+        PropertyKind: Output
+        DisplayName: SortColumn
+        DataType: Number
+        Description: "The column sorted by, from 1; 0 for none."
+      SortDescending:
+        PropertyKind: Output
+        DisplayName: SortDescending
+        DataType: Boolean
+        Description: "True when the sort runs from Z to A or high to low."
+      SelectedIds:
+        PropertyKind: Output
+        DisplayName: SelectedIds
+        DataType: Text
+        Description: "The selected rows' Ids, separated by semicolons."
+      SelectedCount:
+        PropertyKind: Output
+        DisplayName: SelectedCount
+        DataType: Number
+        Description: "How many rows are selected, including any no longer in Rows."
+      SelectedRows:
+        PropertyKind: Output
+        DisplayName: SelectedRows
+        DataType: Table
+        Description: "The selected rows that are in Rows now."
+      OnRowSelect:
+        PropertyKind: Event
+        DisplayName: OnRowSelect
+        ReturnType: None
+        Description: "Runs in your app when the user selects a row, a card or a list item, such as to open it."
+        Parameters:
+          - RowId:
+              DataType: Text
+              Description: "The selected row's Id."
+              Default: =""
+        Default: =false
+      OnRowAction:
+        PropertyKind: Event
+        DisplayName: OnRowAction
+        ReturnType: None
+        Description: "Runs in your app when the user chooses from a row's menu."
+        Parameters:
+          - Action:
+              DataType: Text
+              Description: "The action's text, such as Edit."
+              Default: =""
+          - RowId:
+              DataType: Text
+              Description: "The row's Id."
+              Default: =""
+        Default: =false
+      OnBulkAction:
+        PropertyKind: Event
+        DisplayName: OnBulkAction
+        ReturnType: None
+        Description: "Runs in your app when the user selects a button for the selected rows."
+        Parameters:
+          - Action:
+              DataType: Text
+              Description: "The button's text, such as Approve."
+              Default: =""
+          - RowIds:
+              DataType: Text
+              Description: "The selected rows' Ids, separated by semicolons."
+              Default: =""
+        Default: =false
+      OnSort:
+        PropertyKind: Event
+        DisplayName: OnSort
+        ReturnType: None
+        Description: "Runs in your app when the user selects a column header. Sort Rows by that column."
+        Parameters:
+          - ColumnNumber:
+              DataType: Number
+              Description: "The column to sort by, from 1."
+              Default: =1
+          - Descending:
+              DataType: Boolean
+              Description: "True to sort from Z to A or high to low."
+              Default: =false
+        Default: =false
+      OnViewChange:
+        PropertyKind: Event
+        DisplayName: OnViewChange
+        ReturnType: None
+        Description: "Runs in your app when the user switches between Table, Cards and List."
+        Parameters:
+          - NewView:
+              DataType: Text
+              Description: "The view now shown."
+              Default: ="Table"
+        Default: =false
+      ClearSelection:
+        PropertyKind: Action
+        DisplayName: ClearSelection
+        ReturnType: None
+        Description: "Clears every checkbox, such as after a bulk action."
+    Properties:
+      Width: =960
+      Height: =560
+      Fill: =If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1))
+      CurrentView: =Coalesce(locView, lcsDataTable.View)
+      SortColumn: =Coalesce(locSortColumn, 0)
+      SortDescending: =Coalesce(locSortDescending, false)
+      SelectedIds: =Concat(colSelected, Id, ";")
+      SelectedCount: =CountRows(colSelected)
+      SelectedRows: =Filter(lcsDataTable.Rows, Id in colSelected.Id)
+      ClearSelection: =Clear(colSelected)
+    Children:
+      - lblSelectedCount:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =4
+            Y: =8
+            Width: =128
+            Height: =40
+            Visible: =(lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions))
+            Text: =If(CountRows(colSelected) = 0, "Select rows", CountRows(colSelected) & " selected")
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - btnBulk1:
+          Control: ModernButton@1.0.0
+          Properties:
+            X: =136 + 0
+            Y: =10
+            Width: =104
+            Height: =36
+            Visible: =(lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)) && CountRows(Split(lcsDataTable.BulkActions, ",")) >= 1
+            Text: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 1)).Value)
+            Appearance: =ButtonAppearance.Primary
+            BasePaletteColor: =lcsDataTable.AccentColor
+            DisplayMode: =If(CountRows(colSelected) = 0, DisplayMode.Disabled, DisplayMode.Edit)
+            AccessibleLabel: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 1)).Value) & ", " & CountRows(colSelected) & " selected"
+            OnSelect: =lcsDataTable.OnBulkAction(Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 1)).Value), Concat(colSelected, Id, ";"))
+      - lblBulk2:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnBulk2.X
+            Y: =btnBulk2.Y
+            Width: =btnBulk2.Width
+            Height: =btnBulk2.Height
+            Visible: =btnBulk2.Visible
+            Text: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 2)).Value)
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(btnBulk2.DisplayMode = DisplayMode.Disabled, If(lcsDataTable.Theme = "Dark", RGBA(110, 110, 110, 1), RGBA(170, 170, 170, 1)), If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1)))
+            Fill: =If(lcsDataTable.Theme = "Dark", RGBA(41, 41, 41, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =4
+            PaddingRight: =4
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnBulk2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =136 + 112
+            Y: =10
+            Width: =104
+            Height: =36
+            Visible: =(lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)) && CountRows(Split(lcsDataTable.BulkActions, ",")) >= 2
+            Text: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 2)).Value) & ", " & CountRows(colSelected) & " selected"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            DisplayMode: =If(CountRows(colSelected) = 0, DisplayMode.Disabled, DisplayMode.Edit)
+            OnSelect: =lcsDataTable.OnBulkAction(Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 2)).Value), Concat(colSelected, Id, ";"))
+      - lblBulk3:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnBulk3.X
+            Y: =btnBulk3.Y
+            Width: =btnBulk3.Width
+            Height: =btnBulk3.Height
+            Visible: =btnBulk3.Visible
+            Text: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 3)).Value)
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(btnBulk3.DisplayMode = DisplayMode.Disabled, If(lcsDataTable.Theme = "Dark", RGBA(110, 110, 110, 1), RGBA(170, 170, 170, 1)), If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1)))
+            Fill: =If(lcsDataTable.Theme = "Dark", RGBA(41, 41, 41, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =4
+            PaddingRight: =4
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnBulk3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =136 + 224
+            Y: =10
+            Width: =104
+            Height: =36
+            Visible: =(lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)) && CountRows(Split(lcsDataTable.BulkActions, ",")) >= 3
+            Text: =Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 3)).Value) & ", " & CountRows(colSelected) & " selected"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(82, 82, 82, 1), RGBA(209, 213, 219, 1))
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            DisplayMode: =If(CountRows(colSelected) = 0, DisplayMode.Disabled, DisplayMode.Edit)
+            OnSelect: =lcsDataTable.OnBulkAction(Trim(Last(FirstN(Split(lcsDataTable.BulkActions, ","), 3)).Value), Concat(colSelected, Id, ";"))
+      - lblClearSelection:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnClearSelection.X
+            Y: =btnClearSelection.Y
+            Width: =btnClearSelection.Width
+            Height: =btnClearSelection.Height
+            Visible: =btnClearSelection.Visible
+            Text: ="Clear selection"
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Center
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =4
+            PaddingRight: =4
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnClearSelection:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =136 + Min(3, CountRows(Split(lcsDataTable.BulkActions, ","))) * 112
+            Y: =10
+            Width: =128
+            Height: =36
+            Visible: =(lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)) && CountRows(colSelected) > 0
+            Text: ="Clear selection"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: =Clear(colSelected)
+      - tabView:
+          Control: ModernTabList@1.0.0
+          Properties:
+            X: =Parent.Width - 256
+            Y: =8
+            Width: =256
+            Height: =40
+            Visible: =lcsDataTable.ShowViewToggle
+            Items: =["Table", "Cards", "List"]
+            Default: |-
+              ={Value: Coalesce(locView, lcsDataTable.View)}
+            Appearance: =TabListAppearance.Subtle
+            Alignment: =TabListAlignment.Start
+            AccessibleLabel: ="View"
+            OnChange: |-
+              =Set(locView, tabView.Selected.Value);
+              lcsDataTable.OnViewChange(tabView.Selected.Value)
+      - shpHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Parent.Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading
+            Fill: =If(lcsDataTable.Theme = "Dark", RGBA(46, 46, 46, 1), RGBA(249, 250, 251, 1))
+      - shpHeaderLine:
+          Control: Rectangle@2.3.0
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 44
+            Width: =Parent.Width
+            Height: =1
+            Visible: =shpHeader.Visible
+            Fill: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+      - chkAll:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            X: =12
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 6
+            Width: =32
+            Height: =32
+            Visible: =shpHeader.Visible && lcsDataTable.Selectable
+            Text: ="Select all rows"
+            Color: =RGBA(0, 0, 0, 0)
+            Size: =10
+            Default: =(CountRows(lcsDataTable.Rows) > 0 && CountRows(Filter(lcsDataTable.Rows, Id in colSelected.Id)) = CountRows(lcsDataTable.Rows))
+            CheckboxSize: =18
+            CheckmarkFill: =RGBA(255, 255, 255, 1)
+            CheckboxBackgroundFill: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1)))
+            CheckboxBorderColor: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1)))
+            Fill: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            FocusedBorderColor: =lcsDataTable.AccentColor
+            FocusedBorderThickness: =2
+            OnSelect: |-
+              =If((CountRows(lcsDataTable.Rows) > 0 && CountRows(Filter(lcsDataTable.Rows, Id in colSelected.Id)) = CountRows(lcsDataTable.Rows)), RemoveIf(colSelected, Id in lcsDataTable.Rows.Id), ForAll(Filter(lcsDataTable.Rows, !(Id in colSelected.Id)), Collect(colSelected, {Id: ThisRecord.Id})))
+      - lblHeader1Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader1.X
+            Y: =btnHeader1.Y
+            Width: =btnHeader1.Width
+            Height: =btnHeader1.Height
+            Visible: =btnHeader1.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 1)).Label & If(locSortColumn = 1, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 1)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 1 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 1)).Label & ", sort" & If(
+                  locSortColumn = 1,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 1,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 1);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(1, locSortDescending)
+      - lblHeader1:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 1)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 1 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 1)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - lblHeader2Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader2.X
+            Y: =btnHeader2.Y
+            Width: =btnHeader2.Width
+            Height: =btnHeader2.Height
+            Visible: =btnHeader2.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 2)).Label & If(locSortColumn = 2, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 2)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 2 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 2)).Label & ", sort" & If(
+                  locSortColumn = 2,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 2,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 2);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(2, locSortDescending)
+      - lblHeader2:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 2)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 2 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 2)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - lblHeader3Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader3.X
+            Y: =btnHeader3.Y
+            Width: =btnHeader3.Width
+            Height: =btnHeader3.Height
+            Visible: =btnHeader3.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 3)).Label & If(locSortColumn = 3, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 3)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 3 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 3)).Label & ", sort" & If(
+                  locSortColumn = 3,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 3,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 3);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(3, locSortDescending)
+      - lblHeader3:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 3)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 3 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 3)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - lblHeader4Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader4.X
+            Y: =btnHeader4.Y
+            Width: =btnHeader4.Width
+            Height: =btnHeader4.Height
+            Visible: =btnHeader4.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 4)).Label & If(locSortColumn = 4, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 4)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 4 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 4)).Label & ", sort" & If(
+                  locSortColumn = 4,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 4,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 4);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(4, locSortDescending)
+      - lblHeader4:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 4)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 4 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 4)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - lblHeader5Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader5.X
+            Y: =btnHeader5.Y
+            Width: =btnHeader5.Width
+            Height: =btnHeader5.Height
+            Visible: =btnHeader5.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 5)).Label & If(locSortColumn = 5, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader5:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 5)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 5 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 5)).Label & ", sort" & If(
+                  locSortColumn = 5,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 5,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 5);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(5, locSortDescending)
+      - lblHeader5:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 5)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 5 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 5)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - lblHeader6Button:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =btnHeader6.X
+            Y: =btnHeader6.Y
+            Width: =btnHeader6.Width
+            Height: =btnHeader6.Height
+            Visible: =btnHeader6.Visible
+            Text: =Last(FirstN(lcsDataTable.Columns, 6)).Label & If(locSortColumn = 6, If(locSortDescending, " ↓", " ↑"), "")
+            Size: =13
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            Fill: =RGBA(0, 0, 0, 0)
+            Align: =Align.Left
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+      - btnHeader6:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 6)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 6 && lcsDataTable.Sortable
+            Text: |-
+              =Last(FirstN(lcsDataTable.Columns, 6)).Label & ", sort" & If(
+                  locSortColumn = 6,
+                  If(locSortDescending, ", sorted descending", ", sorted ascending"),
+                  ""
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            OnSelect: |-
+              =If(
+                  locSortColumn = 6,
+                  Set(locSortDescending, !locSortDescending),
+                  Set(locSortColumn, 6);
+                  Set(locSortDescending, false)
+              );
+              lcsDataTable.OnSort(6, locSortDescending)
+      - lblHeader6:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width)
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Last(FirstN(lcsDataTable.Columns, 6)).Width
+            Height: =44
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Table" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading && CountRows(lcsDataTable.Columns) >= 6 && !lcsDataTable.Sortable
+            Text: =Last(FirstN(lcsDataTable.Columns, 6)).Label
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =12
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+      - galRows:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 45
+            Width: =Parent.Width
+            Height: =Parent.Height - (If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 45)
+            Visible: =shpHeader.Visible
+            Items: =lcsDataTable.Rows
+            TemplateSize: =If(lcsDataTable.Density = "Compact", 44, 60)
+            TemplatePadding: =0
+            ShowScrollbar: =true
+            BorderStyle: =BorderStyle.None
+            AccessibleLabel: ="Rows"
+          Children:
+            - shpRow:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Fill: =If(ThisItem.Id in colSelected.Id, ColorFade(lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", 0.7, 0.9)), RGBA(0, 0, 0, 0))
+            - lblCell1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 1)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 1 && (Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 1)).Kind))
+                  Text: =ThisItem.C1
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 1)).Width - 24, Len(ThisItem.C1) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 1 && Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Badge" && !IsBlank(ThisItem.C1)
+                  Text: =ThisItem.C1
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C1))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C1))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell1Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 1)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 1 && Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 1 && Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C1, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell1Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 1)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 1 && Last(FirstN(lcsDataTable.Columns, 1)).Kind = "Progress"
+                  Text: =ThisItem.C1
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCell2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 2)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 2 && (Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 2)).Kind))
+                  Text: =ThisItem.C2
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 2)).Width - 24, Len(ThisItem.C2) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 2 && Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Badge" && !IsBlank(ThisItem.C2)
+                  Text: =ThisItem.C2
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C2))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C2))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell2Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 2)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 2 && Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 2 && Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C2, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell2Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 2)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 2 && Last(FirstN(lcsDataTable.Columns, 2)).Kind = "Progress"
+                  Text: =ThisItem.C2
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCell3:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 3)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 3 && (Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 3)).Kind))
+                  Text: =ThisItem.C3
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell3:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 3)).Width - 24, Len(ThisItem.C3) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 3 && Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Badge" && !IsBlank(ThisItem.C3)
+                  Text: =ThisItem.C3
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C3))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C3))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell3Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 3)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 3 && Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 3 && Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C3, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell3Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 3)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 3 && Last(FirstN(lcsDataTable.Columns, 3)).Kind = "Progress"
+                  Text: =ThisItem.C3
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCell4:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 4)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 4 && (Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 4)).Kind))
+                  Text: =ThisItem.C4
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell4:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 4)).Width - 24, Len(ThisItem.C4) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 4 && Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Badge" && !IsBlank(ThisItem.C4)
+                  Text: =ThisItem.C4
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C4))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C4))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell4Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 4)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 4 && Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 4 && Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C4, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell4Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 4)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 4 && Last(FirstN(lcsDataTable.Columns, 4)).Kind = "Progress"
+                  Text: =ThisItem.C4
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCell5:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 5)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 5 && (Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 5)).Kind))
+                  Text: =ThisItem.C5
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell5:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 5)).Width - 24, Len(ThisItem.C5) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 5 && Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Badge" && !IsBlank(ThisItem.C5)
+                  Text: =ThisItem.C5
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C5))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C5))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell5Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 5)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 5 && Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 5 && Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C5, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell5Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 5)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 5 && Last(FirstN(lcsDataTable.Columns, 5)).Kind = "Progress"
+                  Text: =ThisItem.C5
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCell6:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width)
+                  Y: =0
+                  Width: =Last(FirstN(lcsDataTable.Columns, 6)).Width
+                  Height: =Parent.TemplateHeight
+                  Visible: =CountRows(lcsDataTable.Columns) >= 6 && (Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Text" || Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Strong" || IsBlank(Last(FirstN(lcsDataTable.Columns, 6)).Kind))
+                  Text: =ThisItem.C6
+                  Size: =14
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =If(Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Strong", FontWeight.Semibold, FontWeight.Normal)
+            - pilCell6:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width) + 12
+                  Y: =(Parent.TemplateHeight - 26) / 2
+                  Width: =Min(Last(FirstN(lcsDataTable.Columns, 6)).Width - 24, Len(ThisItem.C6) * 7 + 24)
+                  Height: =26
+                  Visible: =CountRows(lcsDataTable.Columns) >= 6 && Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Badge" && !IsBlank(ThisItem.C6)
+                  Text: =ThisItem.C6
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C6))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(ThisItem.C6))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCell6Bar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width) + 12
+                  Y: =(Parent.TemplateHeight - 8) / 2
+                  Width: =Max(40, Last(FirstN(lcsDataTable.Columns, 6)).Width - 72)
+                  Height: =8
+                  Visible: =CountRows(lcsDataTable.Columns) >= 6 && Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Progress"
+                  Image: |-
+                    =If(
+                        CountRows(lcsDataTable.Columns) >= 6 && Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Progress",
+                        With(
+                            {parts: Split(ThisItem.C6, "/")},
+                            With(
+                                {done: IfError(Value(First(parts).Value), 0), total: Max(1, Min(10, IfError(Value(Last(parts).Value), 1)))},
+                                With(
+                                    {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                    "data:image/svg+xml;utf8," & EncodeUrl(
+                                        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                        Concat(
+                                            Sequence(total),
+                                            "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                                If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                        ) &
+                                        "</svg>"
+                                    )
+                                )
+                            )
+                        ),
+                        ""
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCell6Count:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width) + 12 + Max(40, Last(FirstN(lcsDataTable.Columns, 6)).Width - 72) + 8
+                  Y: =(Parent.TemplateHeight - 8) / 2 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: =CountRows(lcsDataTable.Columns) >= 6 && Last(FirstN(lcsDataTable.Columns, 6)).Kind = "Progress"
+                  Text: =ThisItem.C6
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - btnOpenRow:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0)
+                  Y: =0
+                  Width: =Parent.TemplateWidth - If(lcsDataTable.Selectable, 48, 0) - If(IsBlank(lcsDataTable.RowActions), 0, 52)
+                  Height: =Parent.TemplateHeight
+                  Text: =Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.06), RGBA(0, 0, 0, 0.035))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.07))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  OnSelect: =lcsDataTable.OnRowSelect(ThisItem.Id)
+            - chkRow:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  X: =12
+                  Y: =(Parent.TemplateHeight - 32) / 2
+                  Width: =32
+                  Height: =32
+                  Visible: =lcsDataTable.Selectable
+                  Text: ="Select " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Color: =RGBA(0, 0, 0, 0)
+                  Size: =10
+                  Default: =ThisItem.Id in colSelected.Id
+                  CheckboxSize: =18
+                  CheckmarkFill: =RGBA(255, 255, 255, 1)
+                  CheckboxBackgroundFill: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1)))
+                  CheckboxBorderColor: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1)))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  BorderThickness: =0
+                  FocusedBorderColor: =lcsDataTable.AccentColor
+                  FocusedBorderThickness: =2
+                  OnSelect: |-
+                    =If(ThisItem.Id in colSelected.Id, RemoveIf(colSelected, Id = ThisItem.Id), Collect(colSelected, {Id: ThisItem.Id}))
+            - icoRowMenu:
+                Control: ModernIcon@1.1.0
+                Properties:
+                  X: =btnRowMenu.X + (btnRowMenu.Width - 20) / 2
+                  Y: =btnRowMenu.Y + (btnRowMenu.Height - 20) / 2
+                  Width: =20
+                  Height: =20
+                  Visible: =btnRowMenu.Visible
+                  Icon: =If(locMenuRow = ThisItem.Id, "Dismiss", "MoreHorizontal")
+                  IconColor: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  IconStyle: =IconStyle.Outline
+            - btnRowMenu:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 48
+                  Y: =(Parent.TemplateHeight - 36) / 2
+                  Width: =36
+                  Height: =36
+                  Visible: =!IsBlank(lcsDataTable.RowActions)
+                  Text: =If(locMenuRow = ThisItem.Id, "Close the menu for ", "Actions for ") & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: =Set(locMenuRow, If(locMenuRow = ThisItem.Id, Blank(), ThisItem.Id))
+            - conRowMenu:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  X: =Parent.TemplateWidth - 52 - (Min(3, CountRows(Split(lcsDataTable.RowActions, ","))) * 84 + 8)
+                  Y: =(Parent.TemplateHeight - 40) / 2
+                  Width: =Min(3, CountRows(Split(lcsDataTable.RowActions, ","))) * 84 + 8
+                  Height: =40
+                  Visible: =locMenuRow = ThisItem.Id
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1))
+                  BorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+                  BorderThickness: =1
+            - lblRowAction1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnRowAction1.X
+                  Y: =btnRowAction1.Y
+                  Width: =btnRowAction1.Width
+                  Height: =btnRowAction1.Height
+                  Visible: =btnRowAction1.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnRowAction1:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 52 - (Min(3, CountRows(Split(lcsDataTable.RowActions, ","))) * 84 + 8) + 4 + 0
+                  Y: =(Parent.TemplateHeight - 32) / 2
+                  Width: =80
+                  Height: =32
+                  Visible: =locMenuRow = ThisItem.Id && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 1
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: |-
+                    =Set(locMenuRow, Blank());
+                    lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value), ThisItem.Id)
+            - lblRowAction2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnRowAction2.X
+                  Y: =btnRowAction2.Y
+                  Width: =btnRowAction2.Width
+                  Height: =btnRowAction2.Height
+                  Visible: =btnRowAction2.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnRowAction2:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 52 - (Min(3, CountRows(Split(lcsDataTable.RowActions, ","))) * 84 + 8) + 4 + 84
+                  Y: =(Parent.TemplateHeight - 32) / 2
+                  Width: =80
+                  Height: =32
+                  Visible: =locMenuRow = ThisItem.Id && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 2
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: |-
+                    =Set(locMenuRow, Blank());
+                    lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value), ThisItem.Id)
+            - lblRowAction3:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnRowAction3.X
+                  Y: =btnRowAction3.Y
+                  Width: =btnRowAction3.Width
+                  Height: =btnRowAction3.Height
+                  Visible: =btnRowAction3.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnRowAction3:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =Parent.TemplateWidth - 52 - (Min(3, CountRows(Split(lcsDataTable.RowActions, ","))) * 84 + 8) + 4 + 168
+                  Y: =(Parent.TemplateHeight - 32) / 2
+                  Width: =80
+                  Height: =32
+                  Visible: =locMenuRow = ThisItem.Id && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 3
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: |-
+                    =Set(locMenuRow, Blank());
+                    lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value), ThisItem.Id)
+            - shpRowLine:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =Parent.TemplateHeight - 1
+                  Width: =Parent.TemplateWidth
+                  Height: =1
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+      - galCards:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Parent.Width
+            Height: =Parent.Height - If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Visible: =Coalesce(locView, lcsDataTable.View) = "Cards" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading
+            Items: =lcsDataTable.Rows
+            WrapCount: =If(Parent.Width < 600, 1, If(Parent.Width < 900, 2, 3))
+            TemplateSize: =220
+            TemplatePadding: =0
+            ShowScrollbar: =true
+            BorderStyle: =BorderStyle.None
+            AccessibleLabel: ="Cards"
+          Children:
+            - conCard:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =8
+                  Y: =8
+                  Width: =Parent.TemplateWidth - 16
+                  Height: =Parent.TemplateHeight - 16
+                  Fill: =If(ThisItem.Id in colSelected.Id, ColorFade(lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", 0.7, 0.92)), If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1)))
+                  BorderColor: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Light
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+            - btnOpenCard:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =8
+                  Y: =8
+                  Width: =Parent.TemplateWidth - 16
+                  Height: =Parent.TemplateHeight - 16
+                  Text: =Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.06), RGBA(0, 0, 0, 0.035))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.07))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  OnSelect: =lcsDataTable.OnRowSelect(ThisItem.Id)
+            - lblCardSubtitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =24
+                  Y: =20
+                  Width: =Parent.TemplateWidth - 16 - 72
+                  Height: =18
+                  Text: =Switch(lcsDataTable.SubtitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCardTitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =24
+                  Y: =40
+                  Width: =Parent.TemplateWidth - 16 - 32
+                  Height: =44
+                  Text: =Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =16
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =true
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =FontWeight.Semibold
+            - pilCard1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =24
+                  Y: =92
+                  Width: |-
+                    =Min((Parent.TemplateWidth - 16 - 40) / 2, Len(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")) * 7 + 24)
+                  Height: =26
+                  Visible: |-
+                    =!IsBlank(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N) && !IsBlank(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""))
+                  Text: |-
+                    =Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - pilCard2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: |-
+                    =24 + Min((Parent.TemplateWidth - 16 - 40) / 2, Len(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")) * 7 + 24) + 8
+                  Y: =92
+                  Width: |-
+                    =Min((Parent.TemplateWidth - 16 - 40) / 2, Len(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")) * 7 + 24)
+                  Height: =26
+                  Visible: |-
+                    =If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0) > 0 && !IsBlank(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""))
+                  Text: |-
+                    =Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - prgCardBar:
+                Control: Image@2.2.3
+                Properties:
+                  X: =24
+                  Y: =134
+                  Width: =Parent.TemplateWidth - 16 - 88
+                  Height: =8
+                  Visible: |-
+                    =Coalesce(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Progress")).N, 0) > 0
+                  Image: |-
+                    =With(
+                        {parts: Split(Switch(Coalesce(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Progress")).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""), "/")},
+                        With(
+                            {done: Value(First(parts).Value), total: Max(1, Min(10, Value(Last(parts).Value)))},
+                            With(
+                                {seg: RoundDown((120 - 3 * (total - 1)) / total, 0)},
+                                "data:image/svg+xml;utf8," & EncodeUrl(
+                                    "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'>" & If(lcsDataTable.Motion, "<style>.d{transform-box:fill-box;transform-origin:left center;animation:g .35s cubic-bezier(.2,.8,.2,1) both}@keyframes g{from{transform:scaleX(0)}}@media (prefers-reduced-motion:reduce){.d{animation:none}}</style>", "") &
+                                    Concat(
+                                        Sequence(total),
+                                        "<rect" & If(lcsDataTable.Motion && Value <= done, " class='d' style='animation-delay:" & (Value - 1) * 70 & "ms'", "") & " x='" & (Value - 1) * (seg + 3) & "' y='0' width='" & seg & "' height='8' rx='3' fill='" &
+                                            If(Value <= done, Mid(JSON(lcsDataTable.AccentColor), 2, 7), If(lcsDataTable.Theme = "Dark", "#4a4a4a", "#e2e8f0")) & "'/>"
+                                    ) &
+                                    "</svg>"
+                                )
+                            )
+                        )
+                    )
+                  ImagePosition: =ImagePosition.Fill
+            - prgCardCount:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =24 + Parent.TemplateWidth - 16 - 88 + 8
+                  Y: =134 - 6
+                  Width: =40
+                  Height: =20
+                  Visible: |-
+                    =Coalesce(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Progress")).N, 0) > 0
+                  Text: |-
+                    =Switch(Coalesce(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Progress")).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblCardMeta:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =24
+                  Y: =152
+                  Width: =Parent.TemplateWidth - 16 - 32
+                  Height: =20
+                  Text: |-
+                    =If(Coalesce(First(Filter(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Text"), N <> lcsDataTable.TitleColumn && N <> lcsDataTable.SubtitleColumn)).N, 0) > 0, Last(FirstN(lcsDataTable.Columns, Coalesce(First(Filter(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Text"), N <> lcsDataTable.TitleColumn && N <> lcsDataTable.SubtitleColumn)).N, 0))).Label & ": " & Switch(Coalesce(First(Filter(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Text"), N <> lcsDataTable.TitleColumn && N <> lcsDataTable.SubtitleColumn)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""), "")
+                  Size: =13
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - chkCard:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  X: =Parent.TemplateWidth - 16 - 32
+                  Y: =16
+                  Width: =32
+                  Height: =32
+                  Visible: =lcsDataTable.Selectable
+                  Text: ="Select " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Color: =RGBA(0, 0, 0, 0)
+                  Size: =10
+                  Default: =ThisItem.Id in colSelected.Id
+                  CheckboxSize: =18
+                  CheckmarkFill: =RGBA(255, 255, 255, 1)
+                  CheckboxBackgroundFill: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1)))
+                  CheckboxBorderColor: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1)))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  BorderThickness: =0
+                  FocusedBorderColor: =lcsDataTable.AccentColor
+                  FocusedBorderThickness: =2
+                  OnSelect: |-
+                    =If(ThisItem.Id in colSelected.Id, RemoveIf(colSelected, Id = ThisItem.Id), Collect(colSelected, {Id: ThisItem.Id}))
+            - lblCardAction1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnCardAction1.X
+                  Y: =btnCardAction1.Y
+                  Width: =btnCardAction1.Width
+                  Height: =btnCardAction1.Height
+                  Visible: =btnCardAction1.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnCardAction1:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =20 + 0
+                  Y: =Parent.TemplateHeight - 52
+                  Width: =80
+                  Height: =32
+                  Visible: =true && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 1
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: =lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 1)).Value), ThisItem.Id)
+            - lblCardAction2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnCardAction2.X
+                  Y: =btnCardAction2.Y
+                  Width: =btnCardAction2.Width
+                  Height: =btnCardAction2.Height
+                  Visible: =btnCardAction2.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnCardAction2:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =20 + 84
+                  Y: =Parent.TemplateHeight - 52
+                  Width: =80
+                  Height: =32
+                  Visible: =true && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 2
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: =lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 2)).Value), ThisItem.Id)
+            - lblCardAction3:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =btnCardAction3.X
+                  Y: =btnCardAction3.Y
+                  Width: =btnCardAction3.Width
+                  Height: =btnCardAction3.Height
+                  Visible: =btnCardAction3.Visible
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value)
+                  Size: =13
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =4
+                  PaddingRight: =4
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnCardAction3:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =20 + 168
+                  Y: =Parent.TemplateHeight - 52
+                  Width: =80
+                  Height: =32
+                  Visible: =true && !IsBlank(lcsDataTable.RowActions) && CountRows(Split(lcsDataTable.RowActions, ",")) >= 3
+                  Text: =Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value) & " " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledFill: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsDataTable.Theme = "Dark", ColorFade(lcsDataTable.AccentColor, 0.45), lcsDataTable.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  OnSelect: =lcsDataTable.OnRowAction(Trim(Last(FirstN(Split(lcsDataTable.RowActions, ","), 3)).Value), ThisItem.Id)
+      - galList:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Width: =Parent.Width
+            Height: =Parent.Height - If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)
+            Visible: =Coalesce(locView, lcsDataTable.View) = "List" && CountRows(lcsDataTable.Rows) > 0 && !lcsDataTable.Loading
+            Items: =lcsDataTable.Rows
+            TemplateSize: =76
+            TemplatePadding: =0
+            ShowScrollbar: =true
+            BorderStyle: =BorderStyle.None
+            AccessibleLabel: ="List"
+          Children:
+            - shpListItem:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Fill: =If(ThisItem.Id in colSelected.Id, ColorFade(lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", 0.7, 0.9)), RGBA(0, 0, 0, 0))
+            - lblListIcon:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 16
+                  Y: =16
+                  Width: =44
+                  Height: =44
+                  Text: =Upper(Left(Trim(Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")), 1))
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Size: =16
+                  FontWeight: =FontWeight.Semibold
+                  Fill: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - lblListTitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 16 + 60
+                  Y: =14
+                  Width: =Parent.TemplateWidth - (If(lcsDataTable.Selectable, 48, 0) + 16 + 60) - 260
+                  Height: =22
+                  Text: =Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =15
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  FontWeight: =FontWeight.Semibold
+            - lblListSubtitle:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 16 + 60
+                  Y: =38
+                  Width: =Parent.TemplateWidth - (If(lcsDataTable.Selectable, 48, 0) + 16 + 60) - 260
+                  Height: =20
+                  Text: =Switch(lcsDataTable.SubtitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - pilList1:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =Parent.TemplateWidth - 248
+                  Y: =25
+                  Width: |-
+                    =Min(110, Len(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")) * 7 + 24)
+                  Height: =26
+                  Visible: |-
+                    =!IsBlank(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N) && !IsBlank(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""))
+                  Text: |-
+                    =Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(First(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")).N, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - pilList2:
+                Control: ModernText@1.0.0
+                Properties:
+                  X: =Parent.TemplateWidth - 132
+                  Y: =25
+                  Width: |-
+                    =Min(90, Len(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")) * 7 + 24)
+                  Height: =26
+                  Visible: |-
+                    =If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0) > 0 && !IsBlank(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, ""))
+                  Text: |-
+                    =Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Size: =12
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  VerticalAlign: =VerticalAlign.Middle
+                  Wrap: =false
+                  Fill: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Fill, If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(243, 244, 246, 1)))
+                  Color: |-
+                    =Coalesce(LookUp(lcsDataTable.BadgeStyles, Lower(Value) = Lower(Trim(Switch(If(CountRows(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge")) > 1, Last(FirstN(Filter(ForAll(Sequence(CountRows(lcsDataTable.Columns)) As i, {N: i.Value, K: Last(FirstN(lcsDataTable.Columns, i.Value)).Kind}), K = "Badge"), 2)).N, 0), 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")))).Ink, If(lcsDataTable.Theme = "Dark", RGBA(230, 230, 230, 1), RGBA(75, 85, 99, 1)))
+                  RadiusTopLeft: =13
+                  RadiusTopRight: =13
+                  RadiusBottomLeft: =13
+                  RadiusBottomRight: =13
+                  PaddingLeft: =10
+                  PaddingRight: =10
+                  PaddingTop: =0
+                  PaddingBottom: =0
+            - btnOpenListItem:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0)
+                  Y: =0
+                  Width: =Parent.TemplateWidth - If(lcsDataTable.Selectable, 48, 0)
+                  Height: =Parent.TemplateHeight
+                  Text: =Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.06), RGBA(0, 0, 0, 0.035))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.07))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  OnSelect: =lcsDataTable.OnRowSelect(ThisItem.Id)
+            - chkListItem:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  X: =12
+                  Y: =22
+                  Width: =32
+                  Height: =32
+                  Visible: =lcsDataTable.Selectable
+                  Text: ="Select " & Switch(lcsDataTable.TitleColumn, 1, ThisItem.C1, 2, ThisItem.C2, 3, ThisItem.C3, 4, ThisItem.C4, 5, ThisItem.C5, 6, ThisItem.C6, "")
+                  Color: =RGBA(0, 0, 0, 0)
+                  Size: =10
+                  Default: =ThisItem.Id in colSelected.Id
+                  CheckboxSize: =18
+                  CheckmarkFill: =RGBA(255, 255, 255, 1)
+                  CheckboxBackgroundFill: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(36, 36, 36, 1), RGBA(255, 255, 255, 1)))
+                  CheckboxBorderColor: =If(Self.Value, lcsDataTable.AccentColor, If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1)))
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  BorderThickness: =0
+                  FocusedBorderColor: =lcsDataTable.AccentColor
+                  FocusedBorderThickness: =2
+                  OnSelect: |-
+                    =If(ThisItem.Id in colSelected.Id, RemoveIf(colSelected, Id = ThisItem.Id), Collect(colSelected, {Id: ThisItem.Id}))
+            - icoListChevron:
+                Control: Image@2.2.3
+                Properties:
+                  X: =Parent.TemplateWidth - 34
+                  Y: =28
+                  Width: =20
+                  Height: =20
+                  Image: ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#9ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 6l6 6-6 6'/></svg>")
+            - shpListLine:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =16
+                  Y: =Parent.TemplateHeight - 1
+                  Width: =Parent.TemplateWidth - 32
+                  Height: =1
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(66, 66, 66, 1), RGBA(229, 231, 235, 1))
+      - galSkeleton:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 8
+            Width: =Parent.Width
+            Height: =Parent.Height - (If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + 8)
+            Visible: =lcsDataTable.Loading
+            Items: =Sequence(6)
+            TemplateSize: =If(lcsDataTable.Density = "Compact", 44, 60)
+            TemplatePadding: =0
+            ShowScrollbar: =false
+            BorderStyle: =BorderStyle.None
+            AccessibleLabel: ="Loading"
+          Children:
+            - shpBone1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 1)).Width - 24) * If(Mod(ThisItem.Value + 1, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 1
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - shpBone2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 1), Width) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 2)).Width - 24) * If(Mod(ThisItem.Value + 2, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 2
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - shpBone3:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 2), Width) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 3)).Width - 24) * If(Mod(ThisItem.Value + 3, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 3
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - shpBone4:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 3), Width) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 4)).Width - 24) * If(Mod(ThisItem.Value + 4, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 4
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - shpBone5:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 4), Width) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 5)).Width - 24) * If(Mod(ThisItem.Value + 5, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 5
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - shpBone6:
+                Control: Rectangle@2.3.0
+                Properties:
+                  X: =If(lcsDataTable.Selectable, 48, 0) + Sum(FirstN(lcsDataTable.Columns, 5), Width) + 12
+                  Y: =(Parent.TemplateHeight - 12) / 2
+                  Width: =Max(0, Last(FirstN(lcsDataTable.Columns, 6)).Width - 24) * If(Mod(ThisItem.Value + 6, 3) = 0, 0.55, 0.85)
+                  Height: =12
+                  Visible: =CountRows(lcsDataTable.Columns) >= 6
+                  Fill: =If(lcsDataTable.Theme = "Dark", RGBA(61, 61, 61, 1), RGBA(235, 235, 235, 1))
+            - imgShimmer:
+                Control: Image@2.2.3
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =Parent.TemplateHeight
+                  Visible: =lcsDataTable.Motion
+                  Image: |-
+                    =With(
+                        {
+                            w: RoundDown(Parent.TemplateWidth, 0),
+                            h: Parent.TemplateHeight,
+                            d: (ThisItem.Value - 1) * 90,
+                            o: If(lcsDataTable.Theme = "Dark", ".08", ".7")
+                        },
+                        "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='" & w & "' height='" & h & "' viewBox='0 0 " & w & " " & h & "'><!--" & lcsDataTable.Loading & Rand() & "--><defs><linearGradient id='h' x1='0' x2='1'><stop offset='0' stop-color='#ffffff' stop-opacity='0'/><stop offset='.5' stop-color='#ffffff' stop-opacity='" & o & "'/><stop offset='1' stop-color='#ffffff' stop-opacity='0'/></linearGradient></defs><style>.s{animation:s 1.2s ease-in-out " & d & "ms both}@keyframes s{from{transform:translateX(-160px)}to{transform:translateX(" & w & "px)}}@media (prefers-reduced-motion:reduce){.s{animation:none;opacity:0}}</style><rect class='s' width='160' height='" & h & "' fill='url(#h)'/></svg>")
+                    )
+      - icoEmpty:
+          Control: Image@2.2.3
+          Properties:
+            X: =(Parent.Width - 48) / 2
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + (Parent.Height - If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)) / 2 - 64
+            Width: =48
+            Height: =48
+            Visible: =!lcsDataTable.Loading && CountRows(lcsDataTable.Rows) = 0
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl(
+                  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#9ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'>" &
+                  If(lcsDataTable.Motion, "<!--" & CountRows(lcsDataTable.Rows) & lcsDataTable.Loading & Rand() & "--><style>.p{transform-box:fill-box;transform-origin:center;animation:p .5s cubic-bezier(.2,1.4,.4,1) both}@keyframes p{from{opacity:0;transform:translateY(6px) scale(.7)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.p{animation:none}}</style><g class='p'>", "") &
+                  "<path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><path d='M14 2v6h6'/><path d='M9 15h6'/>" &
+                  If(lcsDataTable.Motion, "</g>", "") &
+                  "</svg>"
+              )
+      - lblEmptyTitle:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + (Parent.Height - If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)) / 2 - 8
+            Width: =Parent.Width
+            Height: =26
+            Visible: =icoEmpty.Visible
+            Text: =lcsDataTable.EmptyTitle
+            Size: =16
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(255, 255, 255, 1), RGBA(36, 36, 36, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            FontWeight: =FontWeight.Semibold
+            Align: =Align.Center
+      - lblEmptyText:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =0
+            Y: =If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0) + (Parent.Height - If(lcsDataTable.ShowViewToggle || (lcsDataTable.Selectable && !IsBlank(lcsDataTable.BulkActions)), 56, 0)) / 2 + 20
+            Width: =Parent.Width
+            Height: =22
+            Visible: =icoEmpty.Visible
+            Text: =lcsDataTable.EmptyText
+            Size: =13
+            Color: =If(lcsDataTable.Theme = "Dark", RGBA(173, 173, 173, 1), RGBA(97, 97, 97, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+            Align: =Align.Center

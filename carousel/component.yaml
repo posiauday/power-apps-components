@@ -1,0 +1,483 @@
+ComponentDefinitions:
+  lcsCarousel:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks carousel: slides from a table, each a picture or a colour with a title and text, advancing on a timer with a pause control, dots and arrows, looping or stopping at the end, with OnChange and OnSelect, Next, Previous, GoTo, Play and Pause, light and dark, and each slide fading in."
+    CustomProperties:
+      Items:
+        PropertyKind: Input
+        DisplayName: Items
+        DataType: Table
+        Description: "The slides, as a table with Key, Title, Text, Image (a picture URL, or empty) and Color (a hex used behind the text when there's no picture) columns."
+        Default: |-
+          =Table({Key: "welcome", Title: "Welcome to the facilities app", Text: "Raise a request, track it, and see what's booked, all in one place.", Image: "", Color: "#0f6cbd"}, {Key: "rooms", Title: "Book a room in two taps", Text: "Pick a room, pick a time. Projector and chairs come with it.", Image: "", Color: "#7c3aed"}, {Key: "help", Title: "Something broken?", Text: "Photograph it and send it. The desk replies within the hour.", Image: "", Color: "#0e7490"})
+      AutoPlay:
+        PropertyKind: Input
+        DisplayName: AutoPlay
+        DataType: Boolean
+        Description: "Advances the slides by itself. People can pause it; a screen reader user should be able to, so leave the pause control on."
+        Default: =true
+      Interval:
+        PropertyKind: Input
+        DisplayName: Interval
+        DataType: Number
+        Description: "How long each slide stays, in milliseconds, when AutoPlay is on."
+        Default: =5000
+      Loop:
+        PropertyKind: Input
+        DisplayName: Loop
+        DataType: Boolean
+        Description: "Goes back to the first slide after the last. Off, it stops at the last and the next arrow is disabled."
+        Default: =true
+      ShowDots:
+        PropertyKind: Input
+        DisplayName: ShowDots
+        DataType: Boolean
+        Description: "Shows a dot per slide under the picture; each is a button to that slide."
+        Default: =true
+      ShowArrows:
+        PropertyKind: Input
+        DisplayName: ShowArrows
+        DataType: Boolean
+        Description: "Shows the previous and next arrows."
+        Default: =true
+      ShowPause:
+        PropertyKind: Input
+        DisplayName: ShowPause
+        DataType: Boolean
+        Description: "Shows the pause and play control when AutoPlay is on."
+        Default: =true
+      ShowCaptions:
+        PropertyKind: Input
+        DisplayName: ShowCaptions
+        DataType: Boolean
+        Description: "Shows each slide's title and text over its lower part."
+        Default: =true
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for the current dot and the focus rings."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "A slide fades in when it arrives. None plays for people who've asked their device for reduced motion; the slides still change."
+        Default: =true
+      CurrentIndex:
+        PropertyKind: Output
+        DisplayName: CurrentIndex
+        DataType: Number
+        Description: "The slide showing now, 1 for the first."
+      CurrentKey:
+        PropertyKind: Output
+        DisplayName: CurrentKey
+        DataType: Text
+        Description: "The Key of the slide showing now."
+      IsPlaying:
+        PropertyKind: Output
+        DisplayName: IsPlaying
+        DataType: Boolean
+        Description: "True while the slides advance by themselves."
+      OnChange:
+        PropertyKind: Event
+        DisplayName: OnChange
+        ReturnType: None
+        Description: "Runs in your app when the slide changes, by the timer or by a person."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The new slide's Key."
+              Default: =""
+          - Index:
+              DataType: Number
+              Description: "The new slide's position, 1 for the first."
+              Default: =1
+        Default: =false
+      OnSelect:
+        PropertyKind: Event
+        DisplayName: OnSelect
+        ReturnType: None
+        Description: "Runs in your app when the slide itself is selected, to open what it's about."
+        Parameters:
+          - Key:
+              DataType: Text
+              Description: "The slide's Key."
+              Default: =""
+          - Index:
+              DataType: Number
+              Description: "The slide's position, 1 for the first."
+              Default: =1
+        Default: =false
+      Next:
+        PropertyKind: Action
+        DisplayName: Next
+        ReturnType: None
+        Description: "Goes to the next slide, or the first after the last when Loop is on."
+      Previous:
+        PropertyKind: Action
+        DisplayName: Previous
+        ReturnType: None
+        Description: "Goes to the slide before, or the last from the first when Loop is on."
+      GoTo:
+        PropertyKind: Action
+        DisplayName: GoTo
+        ReturnType: None
+        Description: "Goes to a slide by position, 1 for the first."
+        Parameters:
+          - Index:
+              DataType: Number
+              Description: "The slide's position."
+              Default: =1
+      Play:
+        PropertyKind: Action
+        DisplayName: Play
+        ReturnType: None
+        Description: "Starts advancing the slides by the timer."
+      Pause:
+        PropertyKind: Action
+        DisplayName: Pause
+        ReturnType: None
+        Description: "Stops the timer; the slides stay until a person moves them."
+    Properties:
+      Width: =480
+      Height: =270 + If(lcsCarousel.ShowDots, 28, 0)
+      Fill: =RGBA(0, 0, 0, 0)
+      OnReset: |-
+        =Set(locIndex, 1);
+        Set(locPlaying, lcsCarousel.AutoPlay);
+        Set(locTick, 0)
+      CurrentIndex: =Max(1, Min(CountRows(lcsCarousel.Items), Coalesce(locIndex, 1)))
+      CurrentKey: =Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Key
+      IsPlaying: =lcsCarousel.AutoPlay && Coalesce(locPlaying, lcsCarousel.AutoPlay)
+      Next: |-
+        =With(
+            {n: CountRows(lcsCarousel.Items), i: lcsCarousel.CurrentIndex},
+            If(
+                i < n || lcsCarousel.Loop,
+                Set(locIndex, If(i < n, i + 1, 1));
+                Set(locTick, locTick + 1);
+                lcsCarousel.OnChange(Index(lcsCarousel.Items, locIndex).Key, locIndex)
+            )
+        )
+      Previous: |-
+        =With(
+            {n: CountRows(lcsCarousel.Items), i: lcsCarousel.CurrentIndex},
+            If(
+                i > 1 || lcsCarousel.Loop,
+                Set(locIndex, If(i > 1, i - 1, n));
+                Set(locTick, locTick + 1);
+                lcsCarousel.OnChange(Index(lcsCarousel.Items, locIndex).Key, locIndex)
+            )
+        )
+      GoTo: |-
+        =With(
+            {n: CountRows(lcsCarousel.Items)},
+            If(
+                Index >= 1 && Index <= n && Index <> lcsCarousel.CurrentIndex,
+                Set(locIndex, Index);
+                Set(locTick, locTick + 1);
+                lcsCarousel.OnChange(Index(lcsCarousel.Items, locIndex).Key, locIndex)
+            )
+        )
+      Play: =Set(locPlaying, true)
+      Pause: =Set(locPlaying, false)
+    Children:
+      - tmrAdvance:
+          Control: Timer@2.1.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =1
+            Height: =1
+            Visible: =false
+            Duration: =Max(1000, lcsCarousel.Interval)
+            Repeat: =true
+            AutoStart: =lcsCarousel.AutoPlay
+            AutoPause: =true
+            Start: =lcsCarousel.IsPlaying
+            OnTimerEnd: =If(lcsCarousel.IsPlaying, lcsCarousel.Next())
+      - imgSlide:
+          Control: Image@2.2.3
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =270
+            Image: |-
+              =With(
+                  {slide: Index(lcsCarousel.Items, lcsCarousel.CurrentIndex)},
+                  If(
+                      !IsBlank(slide.Image),
+                      slide.Image,
+                      "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90' preserveAspectRatio='none'><!-- " & slide.Key & locTick & " --><style>.f{animation:lcsSlideIn .45s ease-out both}@keyframes lcsSlideIn{from{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){.f{animation:none}}</style><rect class='" & If(lcsCarousel.Motion, "f", "") & "' width='160' height='90' fill='" & Coalesce(slide.Color, "#0f6cbd") & "'/><circle class='" & If(lcsCarousel.Motion, "f", "") & "' cx='132' cy='18' r='40' fill='#ffffff' fill-opacity='.12'/></svg>")
+                  )
+              )
+            ImagePosition: =ImagePosition.Fill
+            RadiusTopLeft: =28
+            RadiusTopRight: =28
+            RadiusBottomLeft: =28
+            RadiusBottomRight: =28
+      - imgCaptionShade:
+          Control: Image@2.2.3
+          Properties:
+            X: =0
+            Y: =150
+            Width: =Parent.Width
+            Height: =120
+            Visible: =lcsCarousel.ShowCaptions
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000000' stop-opacity='0'/><stop offset='1' stop-color='#000000' stop-opacity='.65'/></linearGradient></defs><rect width='10' height='10' fill='url(#g)'/></svg>")
+            ImagePosition: =ImagePosition.Stretch
+            RadiusBottomLeft: =28
+            RadiusBottomRight: =28
+      - lblTitle:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20
+            Y: =186
+            Width: =Parent.Width - 40
+            Height: =30
+            Visible: =lcsCarousel.ShowCaptions
+            Text: =Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Title
+            Size: =20
+            FontWeight: =FontWeight.Semibold
+            Color: =RGBA(255, 255, 255, 1)
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblText:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20
+            Y: =216
+            Width: =Parent.Width - 40
+            Height: =40
+            Visible: =lcsCarousel.ShowCaptions
+            Text: =Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Text
+            Size: =13
+            Color: =RGBA(255, 255, 255, 1)
+            VerticalAlign: =VerticalAlign.Top
+            Wrap: =true
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - btnSlide:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =270
+            Text: |-
+              ="Slide " & lcsCarousel.CurrentIndex & " of " & CountRows(lcsCarousel.Items) & ": " & Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Title & ". " & Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Text
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 0, 0, 0.1)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =3
+            RadiusTopLeft: =28
+            RadiusTopRight: =28
+            RadiusBottomLeft: =28
+            RadiusBottomRight: =28
+            Tooltip: =Index(lcsCarousel.Items, lcsCarousel.CurrentIndex).Title
+            OnSelect: =lcsCarousel.OnSelect(lcsCarousel.CurrentKey, lcsCarousel.CurrentIndex)
+      - imgArrowLeft:
+          Control: Image@2.2.3
+          Properties:
+            X: =12
+            Y: =115
+            Width: =40
+            Height: =40
+            Visible: =lcsCarousel.ShowArrows
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='#000000' fill-opacity='.45'/><path d='M23 12l-8 8 8 8' fill='none' stroke='#ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - btnPrevious:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =12
+            Y: =115
+            Width: =40
+            Height: =40
+            Visible: =lcsCarousel.ShowArrows
+            DisplayMode: =If(!lcsCarousel.Loop && lcsCarousel.CurrentIndex <= 1, DisplayMode.Disabled, DisplayMode.Edit)
+            Text: ="Previous slide"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(255, 255, 255, 0.15)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(255, 255, 255, 0.3)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            Tooltip: ="Previous"
+            OnSelect: |-
+              =Set(locPlaying, false);
+              lcsCarousel.Previous()
+      - imgArrowRight:
+          Control: Image@2.2.3
+          Properties:
+            X: =Parent.Width - 52
+            Y: =115
+            Width: =40
+            Height: =40
+            Visible: =lcsCarousel.ShowArrows
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='#000000' fill-opacity='.45'/><path d='M17 12l8 8-8 8' fill='none' stroke='#ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+            ImagePosition: =ImagePosition.Fit
+      - btnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 52
+            Y: =115
+            Width: =40
+            Height: =40
+            Visible: =lcsCarousel.ShowArrows
+            DisplayMode: =If(!lcsCarousel.Loop && lcsCarousel.CurrentIndex >= CountRows(lcsCarousel.Items), DisplayMode.Disabled, DisplayMode.Edit)
+            Text: ="Next slide"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(255, 255, 255, 0.15)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(255, 255, 255, 0.3)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            Tooltip: ="Next"
+            OnSelect: |-
+              =Set(locPlaying, false);
+              lcsCarousel.Next()
+      - imgPlayPause:
+          Control: Image@2.2.3
+          Properties:
+            X: =Parent.Width - 48
+            Y: =12
+            Width: =36
+            Height: =36
+            Visible: =lcsCarousel.AutoPlay && lcsCarousel.ShowPause
+            Image: |-
+              ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><circle cx='18' cy='18' r='18' fill='#000000' fill-opacity='.45'/>" & If(lcsCarousel.IsPlaying, "<path d='M13 11h3.5v14H13zM19.5 11H23v14h-3.5z' fill='#ffffff'/>", "<path d='M14 11l11 7-11 7z' fill='#ffffff'/>") & "</svg>")
+            ImagePosition: =ImagePosition.Fit
+      - btnPlayPause:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =Parent.Width - 48
+            Y: =12
+            Width: =36
+            Height: =36
+            Visible: =lcsCarousel.AutoPlay && lcsCarousel.ShowPause
+            Text: =If(lcsCarousel.IsPlaying, "Pause the slides", "Play the slides")
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(255, 255, 255, 0.15)
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(255, 255, 255, 0.3)
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            Tooltip: =If(lcsCarousel.IsPlaying, "Pause", "Play")
+            OnSelect: =Set(locPlaying, !lcsCarousel.IsPlaying)
+      - galDots:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            X: =(Parent.Width - 28 * CountRows(lcsCarousel.Items)) / 2
+            Y: =270
+            Width: =28 * CountRows(lcsCarousel.Items)
+            Height: =28
+            Visible: =lcsCarousel.ShowDots
+            Items: |-
+              =ForAll(Sequence(CountRows(lcsCarousel.Items)) As s, {Pos: s.Value, Key: Index(lcsCarousel.Items, s.Value).Key, Title: Index(lcsCarousel.Items, s.Value).Title})
+            TemplateSize: =28
+            TemplatePadding: =0
+            WrapCount: =Max(1, CountRows(lcsCarousel.Items))
+            ShowScrollbar: =false
+            AccessibleLabel: ="Slides"
+          Children:
+            - shpDot:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  X: =If(ThisItem.Pos = lcsCarousel.CurrentIndex, 2, 10)
+                  Y: =10
+                  Width: =If(ThisItem.Pos = lcsCarousel.CurrentIndex, 24, 8)
+                  Height: =8
+                  Fill: =If(ThisItem.Pos = lcsCarousel.CurrentIndex, lcsCarousel.AccentColor, If(lcsCarousel.Theme = "Dark", RGBA(110, 110, 110, 1), RGBA(196, 198, 207, 1)))
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  DropShadow: =DropShadow.None
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+            - btnDot:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =28
+                  Height: =28
+                  Text: |-
+                    ="Slide " & ThisItem.Pos & ": " & ThisItem.Title & If(ThisItem.Pos = lcsCarousel.CurrentIndex, ", current", "")
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Color: =RGBA(0, 0, 0, 0)
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =If(lcsCarousel.Theme = "Dark", RGBA(255, 255, 255, 0.08), RGBA(0, 0, 0, 0.05))
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedFill: =If(lcsCarousel.Theme = "Dark", RGBA(255, 255, 255, 0.14), RGBA(0, 0, 0, 0.09))
+                  PressedColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderColor: =If(lcsCarousel.Theme = "Dark", ColorFade(lcsCarousel.AccentColor, 0.45), lcsCarousel.AccentColor)
+                  FocusedBorderThickness: =2
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  Tooltip: =ThisItem.Title
+                  OnSelect: |-
+                    =Set(locPlaying, false);
+                    lcsCarousel.GoTo(ThisItem.Pos)

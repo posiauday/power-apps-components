@@ -1,0 +1,365 @@
+ComponentDefinitions:
+  lcsKpiCard:
+    DefinitionType: CanvasComponent
+    Description: "LowCodeStacks KPI card: one number with its label, the change against a previous value with an arrow coloured by whether up is good, progress toward a target, a status you set or that follows the target, and OnSelect to open the detail behind it."
+    CustomProperties:
+      Label:
+        PropertyKind: Input
+        DisplayName: Label
+        DataType: Text
+        Description: "What the number is, such as Open orders."
+        Default: ="Open orders"
+      Value:
+        PropertyKind: Input
+        DisplayName: Value
+        DataType: Number
+        Description: "The number to show, such as CountIf(Orders, Status = \"Open\")."
+        Default: =128
+      Format:
+        PropertyKind: Input
+        DisplayName: Format
+        DataType: Text
+        Description: "How to show Value: Number, Currency, Percent (0.42 shows as 42%), or Compact (12,400 shows as 12.4K)."
+        Default: ="Number"
+      CurrencySymbol:
+        PropertyKind: Input
+        DisplayName: CurrencySymbol
+        DataType: Text
+        Description: "The symbol before a Currency value, such as $ or €."
+        Default: ="$"
+      Decimals:
+        PropertyKind: Input
+        DisplayName: Decimals
+        DataType: Number
+        Description: "How many decimal places to show for Number and Currency."
+        Default: =0
+      Previous:
+        PropertyKind: Input
+        DisplayName: Previous
+        DataType: Number
+        Description: "The value to compare with, such as last week's. Leave it blank to show no change."
+        Default: =112
+      ChangeLabel:
+        PropertyKind: Input
+        DisplayName: ChangeLabel
+        DataType: Text
+        Description: "What the change is against, shown after it, such as vs last week."
+        Default: ="vs last week"
+      GoodWhen:
+        PropertyKind: Input
+        DisplayName: GoodWhen
+        DataType: Text
+        Description: "Up when a rise is good (sales), Down when a fall is good (open tickets), None to colour the change neutrally."
+        Default: ="Up"
+      Target:
+        PropertyKind: Input
+        DisplayName: Target
+        DataType: Number
+        Description: "A goal to show progress toward as a bar. Leave it blank for no bar."
+        Default: =120
+      Status:
+        PropertyKind: Input
+        DisplayName: Status
+        DataType: Text
+        Description: "The status that tints the icon's circle and the target bar: Auto (good at or above the target, warning from 70%, bad below), Good, Warning, Bad or Neutral."
+        Default: ="Auto"
+      Icon:
+        PropertyKind: Input
+        DisplayName: Icon
+        DataType: Text
+        Description: "A modern icon's name shown in a circle tinted by the status, such as Cart, People or Money. Empty for none."
+        Default: ="Cart"
+      Caption:
+        PropertyKind: Input
+        DisplayName: Caption
+        DataType: Text
+        Description: "A small line under the number when there's no change to show, such as Updated 5 min ago."
+        Default: =""
+      AccentColor:
+        PropertyKind: Input
+        DisplayName: AccentColor
+        DataType: Color
+        Description: "Your brand colour, for the icon, the target bar and the focus ring."
+        Default: =RGBA(15, 108, 189, 1)
+      Theme:
+        PropertyKind: Input
+        DisplayName: Theme
+        DataType: Text
+        Description: "Light, or Dark for a dark screen."
+        Default: ="Light"
+      Motion:
+        PropertyKind: Input
+        DisplayName: Motion
+        DataType: Boolean
+        Description: "The target bar fills and the change arrow pops in when the card loads or its values change. None plays for people who've asked their device for reduced motion."
+        Default: =true
+      Change:
+        PropertyKind: Output
+        DisplayName: Change
+        DataType: Number
+        Description: "Value minus Previous; 0 when there's no Previous."
+      ChangePercent:
+        PropertyKind: Output
+        DisplayName: ChangePercent
+        DataType: Number
+        Description: "The change as a fraction of Previous, such as 0.125 for 12.5%; 0 when there's no Previous or it's 0."
+      Trend:
+        PropertyKind: Output
+        DisplayName: Trend
+        DataType: Text
+        Description: "Up, Down or Flat."
+      TargetPercent:
+        PropertyKind: Output
+        DisplayName: TargetPercent
+        DataType: Number
+        Description: "Value as a fraction of Target, capped at 1; 0 when there's no Target."
+      StatusShown:
+        PropertyKind: Output
+        DisplayName: StatusShown
+        DataType: Text
+        Description: "The status in effect: Good, Warning, Bad or Neutral, after Auto is worked out."
+      ValueText:
+        PropertyKind: Output
+        DisplayName: ValueText
+        DataType: Text
+        Description: "The number as the card shows it, such as $12.4K, for a tooltip or a summary."
+      OnSelect:
+        PropertyKind: Event
+        DisplayName: OnSelect
+        ReturnType: None
+        Description: "Runs in your app when the card is selected, such as Navigate to the list behind the number."
+        Default: =false
+    Properties:
+      Width: =264
+      Height: =152
+      Fill: =RGBA(0, 0, 0, 0)
+      Change: =If(IsBlank(lcsKpiCard.Previous), 0, lcsKpiCard.Value - lcsKpiCard.Previous)
+      ChangePercent: =If(IsBlank(lcsKpiCard.Previous) || lcsKpiCard.Previous = 0, 0, (lcsKpiCard.Value - lcsKpiCard.Previous) / Abs(lcsKpiCard.Previous))
+      Trend: =If(IsBlank(lcsKpiCard.Previous) || lcsKpiCard.Value = lcsKpiCard.Previous, "Flat", If(lcsKpiCard.Value > lcsKpiCard.Previous, "Up", "Down"))
+      TargetPercent: =If(IsBlank(lcsKpiCard.Target) || lcsKpiCard.Target <= 0, 0, Min(1, Max(0, lcsKpiCard.Value / lcsKpiCard.Target)))
+      StatusShown: |-
+        =Switch(
+            lcsKpiCard.Status,
+            "Good", "Good",
+            "Warning", "Warning",
+            "Bad", "Bad",
+            "Neutral", "Neutral",
+            If(
+                IsBlank(lcsKpiCard.Target) || lcsKpiCard.Target <= 0,
+                "Neutral",
+                If(lcsKpiCard.Value >= lcsKpiCard.Target, "Good", If(lcsKpiCard.Value >= lcsKpiCard.Target * 0.7, "Warning", "Bad"))
+            )
+        )
+      ValueText: |-
+        =With(
+            {v: Coalesce(lcsKpiCard.Value, 0), d: Max(0, lcsKpiCard.Decimals)},
+            Switch(
+                lcsKpiCard.Format,
+                "Currency", lcsKpiCard.CurrencySymbol & Text(v, "#,##0" & If(d > 0, "." & Left("000000", d), "")),
+                "Percent", Text(v * 100, "#,##0" & If(d > 0, "." & Left("000000", d), "")) & "%",
+                "Compact", If(Abs(v) >= 1000000, Text(v / 1000000, "#,##0.#") & "M", If(Abs(v) >= 1000, Text(v / 1000, "#,##0.#") & "K", Text(v, "#,##0"))),
+                Text(v, "#,##0" & If(d > 0, "." & Left("000000", d), ""))
+            )
+        )
+    Children:
+      - shpCard:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Fill: =If(lcsKpiCard.Theme = "Dark", RGBA(46, 46, 48, 1), RGBA(247, 248, 251, 1))
+            BorderColor: =If(lcsKpiCard.Theme = "Dark", RGBA(71, 71, 74, 1), RGBA(223, 226, 232, 1))
+            BorderThickness: =1
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+      - lblLabel:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20
+            Y: =18
+            Width: =Parent.Width - If(IsBlank(lcsKpiCard.Icon), 40, 84)
+            Height: =20
+            Text: =lcsKpiCard.Label
+            Size: =14
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsKpiCard.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - shpIcon:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =Parent.Width - 56
+            Y: =14
+            Width: =40
+            Height: =40
+            Visible: =!IsBlank(lcsKpiCard.Icon)
+            Fill: =Switch(lcsKpiCard.StatusShown, "Good", If(lcsKpiCard.Theme = "Dark", RGBA(31, 61, 39, 1), RGBA(216, 243, 220, 1)), "Warning", If(lcsKpiCard.Theme = "Dark", RGBA(74, 52, 16, 1), RGBA(255, 232, 199, 1)), "Bad", If(lcsKpiCard.Theme = "Dark", RGBA(92, 31, 28, 1), RGBA(255, 218, 214, 1)), If(lcsKpiCard.Theme = "Dark", ColorFade(lcsKpiCard.AccentColor, -0.55), ColorFade(lcsKpiCard.AccentColor, 0.85)))
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+      - icoKpi:
+          Control: ModernIcon@1.1.0
+          Properties:
+            X: =Parent.Width - 46
+            Y: =24
+            Width: =20
+            Height: =20
+            Visible: =!IsBlank(lcsKpiCard.Icon)
+            Icon: =Coalesce(lcsKpiCard.Icon, "Circle")
+            IconColor: =Switch(lcsKpiCard.StatusShown, "Good", If(lcsKpiCard.Theme = "Dark", RGBA(159, 224, 173, 1), RGBA(14, 90, 38, 1)), "Warning", If(lcsKpiCard.Theme = "Dark", RGBA(255, 213, 154, 1), RGBA(122, 65, 0, 1)), "Bad", If(lcsKpiCard.Theme = "Dark", RGBA(255, 180, 171, 1), RGBA(140, 29, 24, 1)), If(lcsKpiCard.Theme = "Dark", ColorFade(lcsKpiCard.AccentColor, 0.75), ColorFade(lcsKpiCard.AccentColor, -0.5)))
+            IconStyle: =IconStyle.Outline
+      - lblValue:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20
+            Y: =44
+            Width: =Parent.Width - 40
+            Height: =44
+            Text: =lcsKpiCard.ValueText
+            Size: =34
+            FontWeight: =FontWeight.Semibold
+            Color: =If(lcsKpiCard.Theme = "Dark", RGBA(241, 241, 243, 1), RGBA(27, 27, 31, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - shpChip:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            X: =20
+            Y: =96
+            Width: =Len(If(lcsKpiCard.Trend = "Up", "+", "−") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "%") * 7 + 36
+            Height: =24
+            Visible: =!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat"
+            Fill: =Switch(If(!(!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat") || lcsKpiCard.GoodWhen = "None", "Neutral", If((lcsKpiCard.GoodWhen = "Up" && lcsKpiCard.Trend = "Up") || (lcsKpiCard.GoodWhen = "Down" && lcsKpiCard.Trend = "Down"), "Good", "Bad")), "Good", If(lcsKpiCard.Theme = "Dark", RGBA(31, 61, 39, 1), RGBA(216, 243, 220, 1)), "Warning", If(lcsKpiCard.Theme = "Dark", RGBA(74, 52, 16, 1), RGBA(255, 232, 199, 1)), "Bad", If(lcsKpiCard.Theme = "Dark", RGBA(92, 31, 28, 1), RGBA(255, 218, 214, 1)), If(lcsKpiCard.Theme = "Dark", RGBA(60, 60, 64, 1), RGBA(232, 235, 241, 1)))
+            DropShadow: =DropShadow.None
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+      - imgChange:
+          Control: Image@2.2.3
+          Properties:
+            X: =26
+            Y: =100
+            Width: =16
+            Height: =16
+            Visible: =!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat"
+            Image: |-
+              =With(
+                  {ink: Mid(JSON(Switch(If(!(!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat") || lcsKpiCard.GoodWhen = "None", "Neutral", If((lcsKpiCard.GoodWhen = "Up" && lcsKpiCard.Trend = "Up") || (lcsKpiCard.GoodWhen = "Down" && lcsKpiCard.Trend = "Down"), "Good", "Bad")), "Good", If(lcsKpiCard.Theme = "Dark", RGBA(159, 224, 173, 1), RGBA(14, 90, 38, 1)), "Warning", If(lcsKpiCard.Theme = "Dark", RGBA(255, 213, 154, 1), RGBA(122, 65, 0, 1)), "Bad", If(lcsKpiCard.Theme = "Dark", RGBA(255, 180, 171, 1), RGBA(140, 29, 24, 1)), If(lcsKpiCard.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)))), 2, 7), up: lcsKpiCard.Trend = "Up"},
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><!-- " & lcsKpiCard.Value & "/" & lcsKpiCard.Previous & " --><style>.a{transform-box:fill-box;transform-origin:center;animation:lcsKpiPop .3s cubic-bezier(.2,1.4,.4,1) both}@keyframes lcsKpiPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}@media (prefers-reduced-motion:reduce){.a{animation:none}}</style><path class='" & If(lcsKpiCard.Motion, "a", "") & "' d='" & If(up, "M8 13V3M3.5 7.5 8 3l4.5 4.5", "M8 3v10M3.5 8.5 8 13l4.5-4.5") & "' fill='none' stroke='" & ink & "' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+              )
+            ImagePosition: =ImagePosition.Fit
+      - lblChip:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =46
+            Y: =96
+            Width: =Len(If(lcsKpiCard.Trend = "Up", "+", "−") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "%") * 7 + 6
+            Height: =24
+            Visible: =!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat"
+            Text: =If(lcsKpiCard.Trend = "Up", "+", "−") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "%"
+            Size: =12
+            FontWeight: =FontWeight.Semibold
+            Color: =Switch(If(!(!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat") || lcsKpiCard.GoodWhen = "None", "Neutral", If((lcsKpiCard.GoodWhen = "Up" && lcsKpiCard.Trend = "Up") || (lcsKpiCard.GoodWhen = "Down" && lcsKpiCard.Trend = "Down"), "Good", "Bad")), "Good", If(lcsKpiCard.Theme = "Dark", RGBA(159, 224, 173, 1), RGBA(14, 90, 38, 1)), "Warning", If(lcsKpiCard.Theme = "Dark", RGBA(255, 213, 154, 1), RGBA(122, 65, 0, 1)), "Bad", If(lcsKpiCard.Theme = "Dark", RGBA(255, 180, 171, 1), RGBA(140, 29, 24, 1)), If(lcsKpiCard.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1)))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblChangeLabel:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20 + Len(If(lcsKpiCard.Trend = "Up", "+", "−") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "%") * 7 + 42
+            Y: =96
+            Width: =Parent.Width - (20 + Len(If(lcsKpiCard.Trend = "Up", "+", "−") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "%") * 7 + 42) - 20
+            Height: =24
+            Visible: =!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat" && !IsBlank(lcsKpiCard.ChangeLabel)
+            Text: =lcsKpiCard.ChangeLabel
+            Size: =12
+            Color: =If(lcsKpiCard.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - lblLine:
+          Control: ModernText@1.0.0
+          Properties:
+            X: =20
+            Y: =96
+            Width: =Parent.Width - 40
+            Height: =24
+            Visible: =!(!IsBlank(lcsKpiCard.Previous) && lcsKpiCard.Trend <> "Flat") && !IsBlank(If(IsBlank(lcsKpiCard.Previous), lcsKpiCard.Caption, "No change"))
+            Text: =If(IsBlank(lcsKpiCard.Previous), lcsKpiCard.Caption, "No change")
+            Size: =12
+            Color: =If(lcsKpiCard.Theme = "Dark", RGBA(196, 198, 207, 1), RGBA(68, 71, 78, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Wrap: =false
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PaddingBottom: =0
+      - imgTarget:
+          Control: Image@2.2.3
+          Properties:
+            X: =20
+            Y: =Parent.Height - 22
+            Width: =Parent.Width - 40
+            Height: =6
+            Visible: =!IsBlank(lcsKpiCard.Target) && lcsKpiCard.Target > 0
+            Image: |-
+              =With(
+                  {
+                      p: Round(lcsKpiCard.TargetPercent * 100, 1),
+                      c: Switch(lcsKpiCard.StatusShown, "Good", "#1a7f37", "Warning", "#c56800", "Bad", "#c50f1f", Mid(JSON(If(lcsKpiCard.Theme = "Dark", ColorFade(lcsKpiCard.AccentColor, 0.45), lcsKpiCard.AccentColor)), 2, 7)),
+                      track: If(lcsKpiCard.Theme = "Dark", "#3c3c40", "#e8ebf1")
+                  },
+                  "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 6' preserveAspectRatio='none'><!-- " & lcsKpiCard.Value & "/" & lcsKpiCard.Target & " --><style>.f{transform-origin:left;animation:lcsKpiFill .6s cubic-bezier(.2,.8,.2,1) both}@keyframes lcsKpiFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}@media (prefers-reduced-motion:reduce){.f{animation:none}}</style><rect width='100' height='6' rx='3' fill='" & track & "'/><rect class='" & If(lcsKpiCard.Motion, "f", "") & "' width='" & Max(2, p) & "' height='6' rx='3' fill='" & c & "'/></svg>")
+              )
+            ImagePosition: =ImagePosition.Stretch
+      - btnCard:
+          Control: Classic/Button@2.2.0
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            Text: |-
+              =lcsKpiCard.Label & ": " & lcsKpiCard.ValueText & If(IsBlank(lcsKpiCard.Previous) || lcsKpiCard.Trend = "Flat", "", ", " & If(lcsKpiCard.Trend = "Up", "up ", "down ") & Text(Abs(lcsKpiCard.ChangePercent) * 100, "#,##0.#") & "% " & lcsKpiCard.ChangeLabel)
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            HoverFill: =If(lcsKpiCard.Theme = "Dark", RGBA(255, 255, 255, 0.05), RGBA(0, 0, 0, 0.03))
+            HoverColor: =RGBA(0, 0, 0, 0)
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =If(lcsKpiCard.Theme = "Dark", RGBA(255, 255, 255, 0.1), RGBA(0, 0, 0, 0.06))
+            PressedColor: =RGBA(0, 0, 0, 0)
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            FocusedBorderColor: =If(lcsKpiCard.Theme = "Dark", ColorFade(lcsKpiCard.AccentColor, 0.45), lcsKpiCard.AccentColor)
+            FocusedBorderThickness: =2
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            Tooltip: =lcsKpiCard.Label
+            OnSelect: =lcsKpiCard.OnSelect()
